@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 comments:true
 title:  "[딥러닝 논문정리1] Image-to-Image Translation with Conditional Adversarial Networks"

@@ -1,6 +1,6 @@
 ---
 layout: post
-comments:true
+comments: true
 title:  "Image-to-Image Translation with Conditional Adversarial Networks"
 date:   2018-03-24
 author: Jeong Hoebin

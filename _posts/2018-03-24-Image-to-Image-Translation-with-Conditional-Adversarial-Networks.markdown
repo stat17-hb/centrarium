@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 comments:true
 title:  "Image-to-Image Translation with Conditional Adversarial Networks"

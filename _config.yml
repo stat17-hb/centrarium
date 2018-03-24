@@ -47,7 +47,7 @@ jekyll-archives:
     tag: '/tag/:name/'
 
 # Disqus comments
-disqus_shortname: hoebinjeong
+disqus_shortname: stat17_hb
 
 # Google analytics
 # ga_tracking_id: "UA-XXXX-1"

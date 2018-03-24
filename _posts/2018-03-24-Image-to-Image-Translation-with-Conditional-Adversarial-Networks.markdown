@@ -9,5 +9,8 @@ tags:	deep learning
 cover:  "/assets/deep.jpg"
 ---
 
+[Image-to-Image Translation with Conditional Adversarial Networks][article]
+
 ## 1. 이 논문을 왜 썻는가?
 
+[article]: https://phillipi.github.io/pix2pix/

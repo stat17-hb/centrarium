@@ -3,8 +3,8 @@ layout: post
 comments:true
 title:  "Image-to-Image Translation with Conditional Adversarial Networks"
 date:   2018-03-24
-author: stat17_hb
-categories: Jekyll
+author: Jeong Hoebin
+categories: Deep Laarning
 tags:	deep learning
 cover:  "/assets/deep.jpg"
 ---

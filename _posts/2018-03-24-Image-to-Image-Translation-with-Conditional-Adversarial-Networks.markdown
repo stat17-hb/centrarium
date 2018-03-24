@@ -6,7 +6,7 @@ date:   2018-03-24
 author: Jeong Hoebin
 categories: DeepLearning
 tags:	deeplearning
-cover:  "/assets/deep.PNG"
+cover:  "/assets/deep.png"
 ---
 
 [Image-to-Image Translation with Conditional Adversarial Networks][article]

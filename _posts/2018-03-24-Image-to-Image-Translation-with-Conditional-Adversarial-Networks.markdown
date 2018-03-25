@@ -11,8 +11,7 @@ cover:  "/assets/header_image3.jpg"
 
 [Image-to-Image Translation with Conditional Adversarial Networks][article]
 
-![Figure1]("/assets/pix2pix/figure1.png")
-
+![Figure1](/assets/pix2pix/figure1.png)
 
 ## 1. Purpose
 

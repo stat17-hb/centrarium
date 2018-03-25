@@ -20,6 +20,9 @@ layout: default
   <div class="post-date">{{ page.date | date: "%B %-d, %Y" }}</div>
   <div class="post-categories">
   {% if page.categories.size > 0 %}in {% for cat in page.categories %}
+    {% if page.use_math %}
+      {% include mathjax_support %}
+    {% endif %}
     {% if site.jekyll-archives %}
     <a href="{{ site.baseurl }}/category/{{ cat }}">{{ cat | capitalize }}</a>{% if forloop.last == false %}, {% endif %}
     {% else %}
@@ -35,6 +38,8 @@ layout: default
   </script>
   {{ content }}
 </article>
+
+
 
 {% if site.jekyll-archives %}
 {% if page.tags.size > 0 %}

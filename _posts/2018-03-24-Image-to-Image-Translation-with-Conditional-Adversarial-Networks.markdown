@@ -7,6 +7,7 @@ author: stat17_hb
 categories: DeepLearning
 tags:	deeplearning
 cover:  "/assets/header_image3.jpg"
+use_math: true
 ---
 
 [Image-to-Image Translation with Conditional Adversarial Networks][paper]

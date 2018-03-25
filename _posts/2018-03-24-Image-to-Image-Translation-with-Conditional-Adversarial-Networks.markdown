@@ -11,8 +11,8 @@ cover:  "/assets/header_image3.jpg"
 
 [Image-to-Image Translation with Conditional Adversarial Networks][article]
 
-<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/pix2pix/figure1.PNG" data-lightbox="pix2pix" data-title="figure1">
-  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/pix2pix/figure1.PNG" title="figure1">
+<a href="http://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/pix2pix/figure1.PNG" data-lightbox="pix2pix" data-title="figure1">
+  <img src="http://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/pix2pix/figure1.PNG" title="figure1">
 </a>
 
 

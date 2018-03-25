@@ -105,7 +105,7 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 # 3. Method
 
-GAN은 random noise vector $z$로부터 output image로의 mapping을 학습하는 모델이다. 반면에
+GAN은 random noise vector $$$z$$$로부터 output image로의 mapping을 학습하는 모델이다. 반면에 
 
 
 [paper]: https://phillipi.github.io/pix2pix/

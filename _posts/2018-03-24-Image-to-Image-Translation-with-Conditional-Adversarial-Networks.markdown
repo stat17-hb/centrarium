@@ -85,7 +85,7 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 	+ product photo generation
 	+ and image generation from sparse annotations
 
-+ 다른 몇몇 논문들에서도 GAN을 image-to-image mapping에 사용하였지만, 단지 unconditional하게 GAN을 사용하였다. output이 input에 조건화 되게 하기 위해 L2 regression 같은 다른 term들에 의존했다.
++ 다른 몇몇 논문들에서도 GAN을 image-to-image mapping에 사용하였지만, 단지 unconditional하게 GAN을 사용하였다. 즉, output이 input에 조건화 되게 하기 위해 L2 regression 같은 다른 term들에 의존했다.
 
 + 이 논문들은 다음과 같은 부분에서 인상적인 결과를 보였다.
 
@@ -105,7 +105,7 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 # 3. Method
 
-GAN은 random noise vector $$$z$$$
+GAN은 random noise vector $z$로부터 output image로의 mapping을 학습하는 모델이다. 반면에
 
 
 [paper]: https://phillipi.github.io/pix2pix/

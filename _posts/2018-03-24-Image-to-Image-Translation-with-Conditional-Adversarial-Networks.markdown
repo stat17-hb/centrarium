@@ -15,8 +15,6 @@ cover:  "/assets/header_image3.jpg"
   <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure1.PNG" title="figure1">
 </a>
 
-[TOC]
-
 ## Abstract
 
  이 논문에서는 image to image translation 문제에 대한 general purpose solution으로 conditional adversarial networks을 사용했다. 여기서 general purpose solution이라고 한 이유는 cGAN이 input image에서 output image로의 mapping을 학습할 뿐만 아니라 이 mapping을 훈련시키는데 필요한 loss function도 학습하기 때문이다. 
@@ -57,9 +55,9 @@ GAN은 output image가 real인지 fake인지 판별(D)하기 위한 loss를 학�
 
 + Image to Image translation 문제는 per-pixel classification/ regression으로 자주 공식화된다(fomulated).
 
-+ 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "unstructured"로 취급한다.
++ 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "*unstructured*"로 취급한다.
 
-+ 
++ cGAN은 이와달리 *structured loss*를 학습한다. structured loss는 output의 joint configuration을 penalize한다.
 
 
 

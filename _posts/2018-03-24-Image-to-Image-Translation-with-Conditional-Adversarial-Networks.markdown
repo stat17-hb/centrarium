@@ -58,6 +58,20 @@ GAN은 output image가 real인지 fake인지 판별(D)하기 위한 loss를 학�
 + 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "*unstructured*"로 취급한다.
 
 + cGAN은 이와달리 *structured loss*를 학습한다. structured loss는 output의 joint configuration을 penalize한다.
+=> 이 부분 설명 필요
+joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇인지
+
++ 상당수의 문헌에서는 structured loss를 다음과 같은 방법들로 다루고 있다.
+	+  conditional random fields
+	+  SSIM metric
+	+  feature matching
+	+  nonparametric losses
+	+  convolutional pseudo-prior
+	+  losses based on matching covariance statistics
+
++ cGAN은 output과 target 사이의 어떤 가능한 structure 차이도 다 penalize할 수 있다는 점에서 이와 다르다.
+
+**Conditional GANs**
 
 
 

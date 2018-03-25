@@ -7,7 +7,6 @@ author: stat17_hb
 categories: DeepLearning
 tags:	deeplearning
 cover:  "/assets/header_image3.jpg"
-use_math: true
 ---
 
 [Image-to-Image Translation with Conditional Adversarial Networks][paper]
@@ -106,7 +105,7 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 # 3. Method
 
-GAN은 random noise vector $z$로부터 output image로의 mapping을 학습하는 모델이다. 반면에 conditional GAN은 observed image x와 random noise vector z로부터 y로의 mapping을 학습한다. 
+GAN은 random noise vector $z$로부터 output image로의 mapping을 학습하는 모델이다. 반면에 conditional GAN은 observed image x와 random noise vector $$$z$$$로부터 y로의 mapping을 학습한다. 
 
 
 [paper]: https://phillipi.github.io/pix2pix/

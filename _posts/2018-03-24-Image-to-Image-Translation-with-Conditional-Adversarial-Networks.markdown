@@ -15,14 +15,14 @@ cover:  "/assets/header_image3.jpg"
   <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure1.PNG" title="figure1">
 </a>
 
-## Abstract
+# Abstract
 
  이 논문에서는 image to image translation 문제에 대한 general purpose solution으로 conditional adversarial networks을 사용했다. 여기서 general purpose solution이라고 한 이유는 cGAN이 input image에서 output image로의 mapping을 학습할 뿐만 아니라 이 mapping을 훈련시키는데 필요한 loss function도 학습하기 때문이다. 
  
  기존의 모델에서는 문제의 기본적인 setting이 predict pixels from pixels로 모두 같음에도 불구하고, 각각의 문제마다 서로 다른 loss function이 필요했고, 이를 위한 노동(논문에서는 parameter tweaking, hand-engineering이라는 용어 사용)을 해야 했다(mapping fuction을 training 할 때도 노동이 필요했음). Figure1에서 볼 수 있는 것처럼 cGAN(conditional GAN)을 사용하여 이런 수고를 하지 않고도 다양한 문제를 같은 알고리즘으로 풀 수 있게 되었다.
 
 
-## 1. Introduction
+# 1. Introduction
 
 이 논문에서는 image to image translation 문제를 language translation 문제처럼 접근했다. 즉, 충분한 training data를 통해 하나의 image의 representation을 다른 representation으로 변환하는 방식을 배우도록 한 것이다.
 
@@ -49,15 +49,16 @@ GAN은 output image가 real인지 fake인지 판별(D)하기 위한 loss를 학�
 저자가 공개한 코드는 [여기][code]에 있다.
 
 
-## 2. Related work
+# 2. Related work
 
 **Structured losses for image modeling**
 
-+ Image to Image translation 문제는 per-pixel classification/ regression으로 자주 공식화된다(fomulated).
++ Image to Image translation 문제는 per-pixel classification/ regression으로 자주 표현된다.
 
-+ 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "*unstructured*"로 취급한다.
++ 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "*unstructured*"라고 할 수 있다.
 
 + cGAN은 이와달리 *structured loss*를 학습한다. structured loss는 output의 joint configuration을 penalize한다.
+
 => 이 부분 설명 필요
 joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇인지
 
@@ -71,13 +72,40 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 + cGAN은 output과 target 사이의 어떤 가능한 structure 차이도 다 penalize할 수 있다는 점에서 이와 다르다.
 
+=> 여기서 target이 어떤 걸 말하는거지?
+
 **Conditional GANs**
 
++ 이 논문이 GAN에 conditional setting을 처음 적용한 것은 아니다. 기존의 연구에서도 discrete label, text, image에 대한 conditioned GAN이 사용된 것들이 있다.
 
++ 다음과 같은 작업에서 conditional GAN을 image에 적용하였다.
 
+	+ image prediction from a normal map
+	+ future frame prediction
+	+ product photo generation
+	+ and image generation from sparse annotations
 
++ 다른 몇몇 논문들에서도 GAN을 image-to-image mapping에 사용하였지만, 단지 unconditional하게 GAN을 사용하였다. output이 input에 조건화 되게 하기 위해 L2 regression 같은 다른 term들에 의존했다.
 
++ 이 논문들은 다음과 같은 부분에서 인상적인 결과를 보였다.
 
+	+ inpainting
+	+ future state prediction
+	+ image manipulation guided by user constraints
+	+ style transfer
+	+ superresolution
+
++ 위의 연구들에서 사용한 각각의 방법은 특정 용도에 맞게 만들어졌는데, 이 논문의 방법은 application-specific하지 않다는 점에서 위의 연구들과 다르다.
+
++ 또한, 이 논문에 적용된 방법은 generator와 discriminator에 대한 몇 가지 구조적 선택에서 기존의 연구와는 차이가 있다.
+
+	+ generator에는 **U-Net** 기반 구조를 사용
+		
+	+ discriminator에는 convolutional "**PatchGAN**" classifier 사용 - image patch scale에서만 structure를 penalize
+
+# 3. Method
+
+GAN은 random noise vector $$$z$$$
 
 
 [paper]: https://phillipi.github.io/pix2pix/

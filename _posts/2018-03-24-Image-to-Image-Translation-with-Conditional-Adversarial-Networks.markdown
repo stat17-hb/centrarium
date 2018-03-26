@@ -107,7 +107,9 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 GAN은 random noise vector z로부터 output image로의 mapping을 학습하는 모델이다. 반면에 conditional GAN은 observed image x와 random noise vector z로부터 y로의 mapping을 학습한다. 
 
-
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" data-lightbox="pix2pix" data-title="figure2">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" title="figure2">
+</a>
 
 [paper]: https://phillipi.github.io/pix2pix/
 [23]: https://arxiv.org/abs/1406.2661

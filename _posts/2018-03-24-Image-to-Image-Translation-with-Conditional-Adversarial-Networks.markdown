@@ -119,12 +119,7 @@ cGAN의 목적함수는 다음과 같이 표현된다:
 
 $$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(x,G(x,z)))] \quad \quad \quad \quad \quad \quad (1)$$
 
-여기서 x는 edge map, z는 random noise, y는 real image(*)이다. G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
-
-	(*) figure2를 보면 y가 real image 같은데 
-	conditional GANs learn a mapping from observed image x and random noise vector z, to y, G:{x,z}->y
-	이 부분을 보면 y는 G에서 나온 output image...
-	뭐가 맞는거지?
+여기서 x는 edge map, z는 random noise, y는 real image이다. G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
 
 즉, 
 $$G^*=arg\;\underset{G}{min} \underset{D}{max}L_{cGAN}(G,D)$$ 
@@ -135,9 +130,7 @@ D를 conditioning하는 것의 중요성을 테스트하기 위해서, D가 x를
 $$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(G(x,z)))] \quad \quad \quad \quad \quad \quad (2)$$
 
 선행연구([D. Pathak, P. Krahenbuhl, J. Donahue, T. Darrell, and A. A. Efros. Context encoders: Feature learning by inpainting.
-CVPR, 2016.][42])에서는 GAN의 목적함수에 L2 distance같은 전통적인 loss를 섞는것이 더 좋다는 것을 발견했다. D가 해야하는 일은 기존과 같지만, G는 D를 속이려고 할 뿐만 아니라 L2의 관점에서 ground truth에 가까운 image를 출력해야 한다.
-
-Q. ground truth = real image??
+CVPR, 2016.][42])에서는 GAN의 목적함수에 L2 distance같은 전통적인 loss를 섞는것이 더 좋다는 것을 발견했다. D가 해야하는 일은 기존과 같지만, G는 D를 속이려고 할 뿐만 아니라 L2의 관점에서 ground truth(real image를 말하는 듯 함)에 가까운 image를 출력해야 한다.
 
 image blurring을 줄여주는 L1 distance도 사용하여 탐색했다:
 
@@ -149,7 +142,27 @@ $$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$
 
 input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고(다른 연구에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
 
-=> 아직 dropout 개념을 확실하게 이해못한 듯... overfitting을 막기 위한 조치라는 것은 알고 있는데 구체적으로 어떻게 동작하는지 알아봐야 할 듯.
+### Dropout
+
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" data-lightbox="dropout1" data-title="dropout1">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" title="dropout1">
+</a>
+
++ 전체 weight들을 모두 사용하지 않고 일부만 사용하는 것
+
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" data-lightbox="dropout2" data-title="dropout2">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout2.PNG" title="dropout2">
+</a>
+
++ feed forward 과정에서 난수를 사용하여 일부 뉴런을 0으로 만드는 방법
+
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.PNG" data-lightbox="dropout3" data-title="dropout3">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.PNG" title="dropout3">
+</a>
+
++ 위의 슬라이드에서는 dropout이 어떻게 효과를 내는지 비유적으로 설명
++ 너무 많은 전문가가 있으면 오히려 판단에 장애요소로 작용할 수 있음
++ '사공이 많으면 배가 산으로 간다'
 
 ## 3.2. Network architectures
 

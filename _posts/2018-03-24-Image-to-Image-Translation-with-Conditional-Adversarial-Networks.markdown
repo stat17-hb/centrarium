@@ -115,19 +115,38 @@ Figure2는 edges->photo로 mapping하는 cGAN의 training 과정을 보여준다
 
 ## 3.1 Objective
 
-cGAN의 목적함수는 다음과 같이 표현된다.
+cGAN의 목적함수는 다음과 같이 표현된다:
 
 $$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(x,G(x,z)))] \quad \quad \quad \quad \quad \quad (1)$$
 
-여기서 x는 edge map, z는 random noise, y는 real image이다. G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
+여기서 x는 edge map, z는 random noise, y는 real image(*)이다. G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
+
+	(*) figure2를 보면 y가 real image 같은데 
+	conditional GANs learn a mapping from observed image x and random noise vector z, to y, G:{x,z}->y
+	이 부분을 보면 y는 G에서 나온 output image...
+	뭐가 맞는거지?
 
 즉, 
-$$G^*=argmin_{G}max_{D}L_{cGAN}(G,D)$$ 
+$$G^*=arg\;\underset{G}{min} \underset{D}{max}L_{cGAN}(G,D)$$ 
 이다.
 
-D를 conditioning하는 것의 중요성을 테스트하기 위해서, D가 x를 관측하지 않은 unconditional variant와 비교했다.
+D를 conditioning하는 것의 중요성을 테스트하기 위해서, D가 x를 관측하지 않은 unconditional variant와 비교했다:
 
 $$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(G(x,z)))] \quad \quad \quad \quad \quad \quad (2)$$
+
+선행연구([D. Pathak, P. Krahenbuhl, J. Donahue, T. Darrell, and A. A. Efros. Context encoders: Feature learning by inpainting.
+CVPR, 2016.][42])에서는 GAN의 목적함수에 L2 distance같은 전통적인 loss를 섞는것이 더 좋다는 것을 발견했다. D가 해야하는 일은 기존과 같지만, G는 D를 속이려고 할 뿐만 아니라 L2의 관점에서 ground truth에 가까운 image를 출력해야 한다.
+
+Q. ground truth = real image??
+
+image blurring을 줄여주는 L1 distance도 사용하여 탐색했다:
+
+$$L_{L1}(G)=E_{x,y,z}[||y-G(x,z)||] \quad \quad \quad \quad \quad \quad \quad \quad (3)$$
+
+최종적인 목적함수는
+
+$$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$$
+
 
 
 
@@ -138,3 +157,4 @@ $$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \qu
 [51]: https://arxiv.org/abs/1606.03498
 [62]: https://arxiv.org/abs/1603.08511
 [code]: https://github.com/phillipi/pix2pix
+[42]: https://arxiv.org/abs/1604.07379

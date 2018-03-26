@@ -11,7 +11,7 @@ cover:  "/assets/header_image3.jpg"
 
 [Image-to-Image Translation with Conditional Adversarial Networks][paper]
 
-<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure1.PNG" data-lightbox="pix2pix" data-title="figure1">
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure1.PNG" data-lightbox="figure1" data-title="figure1">
   <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure1.PNG" title="figure1">
 </a>
 
@@ -107,9 +107,25 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 
 GAN은 random noise vector z로부터 output image로의 mapping을 학습하는 모델이다. 반면에 conditional GAN은 observed image x와 random noise vector z로부터 y로의 mapping을 학습한다. 
 
-<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" data-lightbox="pix2pix" data-title="figure2">
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" data-lightbox="figure2" data-title="figure2">
   <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" title="figure2">
 </a>
+
+Figure2는 edges->photo로 mapping하는 cGAN의 training 과정을 보여준다. discriminator(D)는 fake(genertor(G)에 의해 만들어진 image)와 real {edge, photo} 튜플을 구분하는 학습을 한다. G는 D를 속이기 위한 학습을 한다. unconditional GAN과는 다르게 G와 D 모두 input edge map을 관측한다. 
+
+=> unconditional GAN에서는 Generator에 들어가는 input은 random noise인데 cGAN에서는 random noise가 아니다.???
+
+## 3.1 Objective
+
+cGAN의 목적함수는 다음과 같이 표현된다.
+
+$$L_{cGAN}(G, D) = E_{x,y}[logd(x,y)]+E_{x.z}[log(1-D(x,G(x,z)))]$$
+
+G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
+
+즉, $G^*=argmin_{G}max_{D}L_{cGAN}(G,D)$ 이다.
+
+
 
 [paper]: https://phillipi.github.io/pix2pix/
 [23]: https://arxiv.org/abs/1406.2661

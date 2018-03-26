@@ -111,19 +111,23 @@ GAN은 random noise vector z로부터 output image로의 mapping을 학습하는
   <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure2.PNG" title="figure2">
 </a>
 
-Figure2는 edges->photo로 mapping하는 cGAN의 training 과정을 보여준다. discriminator(D)는 fake(genertor(G)에 의해 만들어진 image)와 real {edge, photo} 튜플을 구분하는 학습을 한다. G는 D를 속이기 위한 학습을 한다. unconditional GAN과는 다르게 G와 D 모두 input edge map을 관측한다. 
-
-=> unconditional GAN에서는 Generator에 들어가는 input은 random noise인데 cGAN에서는 random noise가 아니다.???
+Figure2는 edges->photo로 mapping하는 cGAN의 training 과정을 보여준다. discriminator(D)는 fake(genertor(G)에 의해 만들어진 image)와 real {edge, photo} 튜플을 구분하는 학습을 한다. G는 D를 속이기 위한 학습을 한다. unconditional GAN과는 다르게 G와 D 모두 input edge map(목적함수에서 x로 표현됨)을 관측한다. unconditional GAN에서는 random noise z만 G에 input으로 들어갔다.
 
 ## 3.1 Objective
 
 cGAN의 목적함수는 다음과 같이 표현된다.
 
-$$L_{cGAN}(G, D) = E_{x,y}[logd(x,y)]+E_{x.z}[log(1-D(x,G(x,z)))]$$
+$$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(x,G(x,z)))] \quad \quad \quad \quad \quad \quad (1)$$
 
-G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
+여기서 x는 edge map, z는 random noise, y는 real image이다. G는 이 목적함수를 최소화하려고 하고, 반대로 적대적인 D는 목적함수를 최대화하려고 한다.
 
-즉, $G^*=argmin_{G}max_{D}L_{cGAN}(G,D)$ 이다.
+즉, 
+$$G^*=argmin_{G}max_{D}L_{cGAN}(G,D)$$ 
+이다.
+
+D를 conditioning하는 것의 중요성을 테스트하기 위해서, D가 x를 관측하지 않은 unconditional variant와 비교했다.
+
+$$L_{cGAN}(G, D) = E_{x,y}[logD(x,y)] \\ \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad +E_{x.z}[log(1-D(G(x,z)))] \quad \quad \quad \quad \quad \quad (2)$$
 
 
 

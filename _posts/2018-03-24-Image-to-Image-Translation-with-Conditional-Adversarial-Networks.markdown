@@ -103,6 +103,8 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 		
 	+ discriminator에는 convolutional "**PatchGAN**" classifier 사용 - image patch scale에서만 structure를 penalize
 
+	+ U-Net과 PatchGAN이 무엇인지는 3.2. Network architectures에서 설명됨
+
 # 3. Method
 
 GAN은 random noise vector z로부터 output image로의 mapping을 학습하는 모델이다. 반면에 conditional GAN은 observed image x와 random noise vector z로부터 y로의 mapping을 학습한다. 
@@ -113,7 +115,7 @@ GAN은 random noise vector z로부터 output image로의 mapping을 학습하는
 
 Figure2는 edges->photo로 mapping하는 cGAN의 training 과정을 보여준다. discriminator(D)는 fake(genertor(G)에 의해 만들어진 image)와 real {edge, photo} 튜플을 구분하는 학습을 한다. G는 D를 속이기 위한 학습을 한다. unconditional GAN과는 다르게 G와 D 모두 input edge map(목적함수에서 x로 표현됨)을 관측한다. unconditional GAN에서는 random noise z만 G에 input으로 들어갔다.
 
-## 3.1 Objective
+## 3.1. Objective
 
 cGAN의 목적함수는 다음과 같이 표현된다:
 

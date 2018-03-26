@@ -147,6 +147,12 @@ $$L_{L1}(G)=E_{x,y,z}[||y-G(x,z)||] \quad \quad \quad \quad \quad \quad \quad \q
 
 $$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$$
 
+input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고(다른 연구에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
+
+=> 아직 dropout 개념을 확실하게 이해못한 듯... overfitting을 막기 위한 조치라는 것은 알고 있는데 구체적으로 어떻게 동작하는지 알아봐야 할 듯.
+
+## 3.2. Network architectures
+
 
 
 

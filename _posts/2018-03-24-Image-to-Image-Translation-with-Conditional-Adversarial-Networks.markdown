@@ -142,22 +142,24 @@ $$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$
 
 input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고(다른 연구에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
 
-### Dropout
+### Dropout 이란?
 
-<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" data-lightbox="dropout1" data-title="dropout1">
-  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" title="dropout1">
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.png" data-lightbox="dropout1" data-title="dropout1">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.png" title="dropout1">
 </a>
 
++ 신경망 전체를 다 학습시키지 않고 일부 노드만 무작위로 골라 학습시키는 기법
 + 전체 weight들을 모두 사용하지 않고 일부만 사용하는 것
 
-<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout1.PNG" data-lightbox="dropout2" data-title="dropout2">
-  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout2.PNG" title="dropout2">
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout2.png" data-lightbox="dropout2" data-title="dropout2">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout2.png" title="dropout2">
 </a>
 
-+ feed forward 과정에서 난수를 사용하여 일부 뉴런을 0으로 만드는 방법
++ 학습하는 중간중간 일정 비율로 노드들을 무작위로 골라 출력을 0으로 만들어 신경망의 출력을 계산
++ 드롭아웃을 적용하면 학습되는 노드와 가중치들이 매번 달라져서 신경망이 과적합에 빠지는 것을 효과적으로 예방할 수 있다고 함
 
-<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.PNG" data-lightbox="dropout3" data-title="dropout3">
-  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.PNG" title="dropout3">
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.png" data-lightbox="dropout3" data-title="dropout3">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/dropout3.png" title="dropout3">
 </a>
 
 + 위의 슬라이드에서는 dropout이 어떻게 효과를 내는지 비유적으로 설명

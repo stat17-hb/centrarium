@@ -166,6 +166,8 @@ input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z�
 + 너무 많은 전문가가 있으면 오히려 판단에 장애요소로 작용할 수 있음
 + '사공이 많으면 배가 산으로 간다'
 
+위의 슬라이드는 김성훈 교수님의 [모두를 위한 머신러닝/딥러닝 강의 깃허브][모두를 위한 딥러닝 깃허브]에서 가져옴
+
 ## 3.2. Network architectures
 
 
@@ -179,3 +181,4 @@ input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z�
 [62]: https://arxiv.org/abs/1603.08511
 [code]: https://github.com/phillipi/pix2pix
 [42]: https://arxiv.org/abs/1604.07379
+[모두를 위한 딥러닝 깃허브]: https://hunkim.github.io/ml/

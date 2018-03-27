@@ -142,7 +142,7 @@ $$L_{L1}(G)=E_{x,y,z}[||y-G(x,z)||] \quad \quad \quad \quad \quad \quad \quad \q
 
 $$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$$
 
-input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고(다른 연구에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
+input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고([다른 연구][39]에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
 
 ### Dropout 이란?
 
@@ -172,8 +172,46 @@ input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z�
 
 ## 3.2. Network architectures
 
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure3.PNG" data-lightbox="figure3" data-title="figure3">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure3.PNG" title="figure3">
+</a>
+
+이 논문에서는 [Unsupervised representation learning with deep convolutional generative adversarial networks][43]에 있는 generator와 discriminator architectures를 사용했다.
+
+generator와 discriminator 모두 [convolution-BatchNorm-ReLu][28] 형태의 모듈을 사용했다.
+
+### 3.2.1 Generator with skips
 
 
+
+### 3.2.2 Markovian discriminator (PatchGAN)
+
+
+## 3.3. Optimization and inference
+
+
+
+# 4. Experiments
+
+
+## 4.1. Evaluation metrics
+
+
+## 4.2. Analysis of the objective function
+
+
+## 4.3. Analysis of the generator architecture
+
+
+## 4.4. FromPixelGANs to PatchGANs to ImageGANs
+
+## 4.5. Perceptual validation
+
+## 4.6. Semantic segmentation
+
+## 4.7. Communitydriven Research
+
+# 5. Conclusion
 
 [paper]: https://phillipi.github.io/pix2pix/
 [23]: https://arxiv.org/abs/1406.2661
@@ -183,4 +221,6 @@ input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z�
 [62]: https://arxiv.org/abs/1603.08511
 [code]: https://github.com/phillipi/pix2pix
 [42]: https://arxiv.org/abs/1604.07379
+[39]: https://arxiv.org/abs/1511.05440
 [모두를 위한 딥러닝 깃허브]: https://hunkim.github.io/ml/
+[28]: https://arxiv.org/abs/1502.03167

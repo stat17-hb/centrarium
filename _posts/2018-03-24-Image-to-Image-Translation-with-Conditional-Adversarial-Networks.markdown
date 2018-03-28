@@ -182,7 +182,9 @@ generator와 discriminator 모두 [convolution-BatchNorm-ReLu][28] 형태의 모
 
 ### 3.2.1 Generator with skips
 
+image to image translation 문제에서 feature를 정의하는 것은 고해상도 input 그리드를 고해상도 output 그리드에 mapping하는 것이다. 우리가 고려하는 문제에 대해, 입력과 출력은 표면적인 형태는 다르지만 둘 다 동일한 기본 구조를 가진 랜더링이다. 따라서 입력에 있는 구조가 출력에 있는 구조와 대략적으로 정렬되어 있다. 이런한 것을 고려하여 generator architecture를 설계했다.
 
+이전에 많은 연구들에서 이 문제를 풀기 위해 encoder-decoder network를 사용했다. 이런 네트워크 구조에서는 input이 레이어들을 거치면서 bottleneck layer에 도달할 때까지 downsample 되고, 그 이후에는 upsample 된다. image translation문제를 풀때는 많은 양의 low-level information이 input과 output에서 공유되는데, 이 information을 직접적으로 전달하는 것이 바람직하다. 즉, 모든 레이어를 거치지 않고 bottleneck 레이어를 기준으로 대응되는 레이어지 직접 전달하는 것이다. 이것을 skip connection 이라 하고, Figure 3의 U-Net이 이 구조를 나타낸 것이다.
 
 ### 3.2.2 Markovian discriminator (PatchGAN)
 

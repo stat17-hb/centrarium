@@ -216,6 +216,7 @@ $$log(D(x,G(x,z)))$$
 + minibatch SGD(Stochastic Gradient Descent)를 사용했고, Adam solver를 0.0002의 learning rate와 momentum parameter beta_1 = 0.5, beta_2 = 0.999로 사용했다.
 
 [Adam solver][adam]
+
 [Adam: A Method for Stochastic Optimization][Adam논문]
 
 + dropout을 test 할 때도 적용했는데, 이것은 보통의 프로토콜과 다른 것이다.
@@ -223,6 +224,7 @@ $$log(D(x,G(x,z)))$$
 + batch normalization을 적용할 때도 training batch의 통계량을 사용하는 대신에 test batch의 통계량을 사용했다.
 
 [batch normalization 설명1][batch norm1]
+
 [batch normalization 설명2][batch norm2]
 
 + 이렇게 한 이유는 실험해봤더니 효과적이어서???

@@ -140,7 +140,7 @@ $$L_{L1}(G)=E_{x,y,z}[||y-G(x,z)||] \quad \quad \quad \quad \quad \quad \quad \q
 
 최종적인 목적함수는
 
-$$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G)$$
+$$G^*=arg\;\underset{G}{min} \underset{D}{max} L_{cGAN}(G,D)+ \lambda L_{L1}(G) \quad \quad \quad \quad \quad \quad \quad \quad (4)$$
 
 input에 x(e.g. edge map)와 random noise z를 같이 사용하는 이유는 z가 없어도 x에서 y로 가는 mapping을 학습하기는 하지만 stochastic하지 않고 deterministic한 결과만을 내놓기 때문이다. cGAN을 사용한 선행연구들에서도 이런점을 인지하고 x와 함께 Guassian random noise를 input으로 넣어왔다. 하지만 이 논문에서는 초기 실험에서 이러한 기법이 효과적이라는 증거를 찾기 못했고([다른 연구][39]에서도 이런 결과가 나온 경우가 있었다고 한다.), 최종 모델에서 noise를 dropout의 형태로만 제공했다. training과 test를 할 때 generator의 몇몇 layer에만 적용했다고 한다. 결과적으로 dropout noise를 추가한 것이 stochastic한 결과를 얻는게 크게 도움이 되지는 않았다. cGAN이 highly stochastic한 output을 만들어 내도록 설계하는 것이 앞으로의 과제로 남아있다.
 
@@ -184,14 +184,48 @@ generator와 discriminator 모두 [convolution-BatchNorm-ReLu][28] 형태의 모
 
 image to image translation 문제에서 feature를 정의하는 것은 고해상도 input 그리드를 고해상도 output 그리드에 mapping하는 것이다. 우리가 고려하는 문제에 대해, 입력과 출력은 표면적인 형태는 다르지만 둘 다 동일한 기본 구조를 가진 랜더링이다. 따라서 입력에 있는 구조가 출력에 있는 구조와 대략적으로 정렬되어 있다. 이런한 것을 고려하여 generator architecture를 설계했다.
 
-이전에 많은 연구들에서 이 문제를 풀기 위해 encoder-decoder network를 사용했다. 이런 네트워크 구조에서는 input이 레이어들을 거치면서 bottleneck layer에 도달할 때까지 downsample 되고, 그 이후에는 upsample 된다. image translation문제를 풀때는 많은 양의 low-level information이 input과 output에서 공유되는데, 이 information을 직접적으로 전달하는 것이 바람직하다. 즉, 모든 레이어를 거치지 않고 bottleneck 레이어를 기준으로 대응되는 레이어지 직접 전달하는 것이다. 이것을 skip connection 이라 하고, Figure 3의 U-Net이 이 구조를 나타낸 것이다.
+이전에 많은 연구들에서 이 문제를 풀기 위해 encoder-decoder network를 사용했다. 이런 네트워크 구조에서는 input이 레이어들을 거치면서 bottleneck layer에 도달할 때까지 downsample 되고, 그 이후에는 upsample 된다. image translation문제를 풀때는 많은 양의 low-level information이 input과 output에서 공유되는데, 이 information을 직접적으로 전달하는 것이 바람직하다. 즉, 모든 레이어를 거치지 않고 bottleneck 레이어를 기준으로 대응되는 레이어지 직접 전달하는 것이다. 이것을 skip connection 이라 하고, Figure 3의 U-Net이 이 구조를 나타낸 것이다. 각각의 skip connection에서 i번째 layer는 n-i번째 layer와 합쳐진다.
 
 ### 3.2.2 Markovian discriminator (PatchGAN)
 
+<a href="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure4.PNG" data-lightbox="figure4" data-title="figure4">
+  <img src="https://raw.githubusercontent.com/stat17-hb/stat17-hb.github.io/master/assets/pix2pix/figure4.PNG" title="figure4">
+</a>
+
+Figure 4에서처럼 L2 loss나 L1 loss가 image generation문제에서 blurry한 결과를 만들어낸다는 것은 잘 알려진 사실이다. 비록 이 loss들이 high frequency crispness(crispness is about how well that detail is conveyed to the viewer)를 만들지 못하지만, 많은 경우에 정확하게 low frequency structure를 파악할 수 있다. L1 term이 low frequency structure를 잘 잡아낸다는 점을 고려하여 discriminator를 high frequency structure만 잘 잡아낼 수 있도록 설계하였다. 이것이 PatchGAN이라고 이름 붙인 것인데, patch 스케일에서만 structure를 penalize하는 것이다. discriminator는 각각의 NxN patch가 real인지 fake인지 분류하려고 노력한다. 이 discriminator를 image 전체에 convolutional하게 돌렸고, 결과를 평균내서 최종적인 output D를 만들었다.
+
+	Q. high frequency structure란??? 자주 등장하는 구조???
+	Q. patch 스케일에서만 structure를 penalize했다는 건 정확히 무슨 의미???
+
+Section 4.4에서 N이 image 전체 크기보다 매우 작더라도 high quality 결과를 만들수 있다는 것을 보여줄 것이다. 이게 모델을 돌릴때 아주 큰 장점으로 작용하는데, 왜냐하면 작은 PatchGAN은 더 적은 수의 파라미터들을 가지고 있고, 빨리 돌아가고, patch size보다 큰 이미지이면 잘 적용할 수 있기 때문이다.
+
+이런 discriminator는 patch 직경 이상으로 분리된 픽셀 사이의 독립성을 가정하여 효과적으로 이미지를 Markov random field로 모델링 한다. 이런 connection은 texture나 style을 다룬 이전의 연구에서도 찾아볼 수 있다. 따라서 이 PatchGAN은 texture/style loss의 형태로 이해할 수 있다.
 
 ## 3.3. Optimization and inference
 
++ 네트워크를 최적화 시키기 위해서 스탠다드한 접근법을 따랐다: D와 G에 차례로 Gradient descent를 적용.
 
++ original GAN paper에서 한 것처럼
+$$log(1-D(x,G(x,z)))$$
+를 minimize하는 대신에
+$$log(D(x,G(x,z)))$$
+를 maximize했다.
+
++ D를 최적화 할 때 objective function을 두 부분으로 나누었는데, D가 학습하는 비율을 G에 비해 느리게 했다.
+
++ minibatch SGD(Stochastic Gradient Descent)를 사용했고, Adam solver를 0.0002의 learning rate와 momentum parameter beta_1 = 0.5, beta_2 = 0.999로 사용했다.
+
+[Adam solver][adam]
+[Adam: A Method for Stochastic Optimization][Adam논문]
+
++ dropout을 test 할 때도 적용했는데, 이것은 보통의 프로토콜과 다른 것이다.
+
++ batch normalization을 적용할 때도 training batch의 통계량을 사용하는 대신에 test batch의 통계량을 사용했다.
+
+[batch normalization 설명1][batch norm1]
+[batch normalization 설명2][batch norm2]
+
++ 이렇게 한 이유는 실험해봤더니 효과적이어서???
 
 # 4. Experiments
 
@@ -226,3 +260,7 @@ image to image translation 문제에서 feature를 정의하는 것은 고해상
 [39]: https://arxiv.org/abs/1511.05440
 [모두를 위한 딥러닝 깃허브]: https://hunkim.github.io/ml/
 [28]: https://arxiv.org/abs/1502.03167
+[batch norm1]: https://shuuki4.wordpress.com/2016/01/13/batch-normalization-%EC%84%A4%EB%AA%85-%EB%B0%8F-%EA%B5%AC%ED%98%84/
+[batch norm2]: http://sanghyukchun.github.io/88/
+[adam]: http://dalpo0814.tistory.com/29#introdunction
+[Adam논문]: https://arxiv.org/abs/1412.6980v8

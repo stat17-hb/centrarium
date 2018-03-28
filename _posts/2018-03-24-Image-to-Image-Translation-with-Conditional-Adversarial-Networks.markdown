@@ -59,8 +59,9 @@ GAN은 output image가 real인지 fake인지 판별(D)하기 위한 loss를 학�
 
 + cGAN은 이와달리 *structured loss*를 학습한다. structured loss는 output의 joint configuration을 penalize한다.
 
-=> 이 부분 설명 필요
-joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇인지
+```
+output의 joint configuration이 뭐지?
+```
 
 + 상당수의 문헌에서는 structured loss를 다음과 같은 방법들로 다루고 있다.
 	+  conditional random fields
@@ -71,8 +72,6 @@ joint configuration이 무엇이고, 그것을 penalize한다는 것이 무엇�
 	+  losses based on matching covariance statistics
 
 + cGAN은 output과 target 사이의 어떤 가능한 structure 차이도 다 penalize할 수 있다는 점에서 이와 다르다.
-
-=> 여기서 target이 어떤 걸 말하는거지?
 
 **Conditional GANs**
 
@@ -194,8 +193,17 @@ image to image translation 문제에서 feature를 정의하는 것은 고해상
 
 Figure 4에서처럼 L2 loss나 L1 loss가 image generation문제에서 blurry한 결과를 만들어낸다는 것은 잘 알려진 사실이다. 비록 이 loss들이 high frequency crispness(crispness is about how well that detail is conveyed to the viewer)를 만들지 못하지만, 많은 경우에 정확하게 low frequency structure를 파악할 수 있다. L1 term이 low frequency structure를 잘 잡아낸다는 점을 고려하여 discriminator를 high frequency structure만 잘 잡아낼 수 있도록 설계하였다. 이것이 PatchGAN이라고 이름 붙인 것인데, patch 스케일에서만 structure를 penalize하는 것이다. discriminator는 각각의 NxN patch가 real인지 fake인지 분류하려고 노력한다. 이 discriminator를 image 전체에 convolutional하게 돌렸고, 결과를 평균내서 최종적인 output D를 만들었다.
 
-	Q. high frequency structure란??? 자주 등장하는 구조???
-	Q. patch 스케일에서만 structure를 penalize했다는 건 정확히 무슨 의미???
+
+> When you work in spacial domain, for exemple, the filtering is performed by a convolution of a filter (mask) with an image which is represented with pixels.
+
+>In the frequency representation with the fourrier transform (FFT), filtering selects certain frequencies and reject others. 
+
+>In an image, a frequency represents a slow variation (low frequency) or rapid transitions of gray level (high frequency).
+
+>The contours (details) of objects can be treated as high frequencies while homogenous areas with the same shade of gray level as the low frequency.
+
+
+
 
 Section 4.4에서 N이 image 전체 크기보다 매우 작더라도 high quality 결과를 만들수 있다는 것을 보여줄 것이다. 이게 모델을 돌릴때 아주 큰 장점으로 작용하는데, 왜냐하면 작은 PatchGAN은 더 적은 수의 파라미터들을 가지고 있고, 빨리 돌아가고, patch size보다 큰 이미지이면 잘 적용할 수 있기 때문이다.
 
@@ -227,7 +235,6 @@ $$log(D(x,G(x,z)))$$
 
 [batch normalization 설명2][batch norm2]
 
-+ 이렇게 한 이유는 실험해봤더니 효과적이어서???
 
 # 4. Experiments
 

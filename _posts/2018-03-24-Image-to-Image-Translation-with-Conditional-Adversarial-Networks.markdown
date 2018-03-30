@@ -51,11 +51,11 @@ GAN은 output image가 real인지 fake인지 판별(D)하기 위한 loss를 학�
 
 # 2. Related work
 
-**Structured losses for image modeling**
+**losses for image modeling**
 
 + Image to Image translation 문제는 per-pixel classification/ regression으로 자주 표현된다.
 
-+ 이런 fomulation은 output space를 input image가 주어졌을 때 각각의 output 픽셀이 다른 픽셀들과 조건부 독립으로 여겨진다는 점에서 "*unstructured*"라고 할 수 있다.
++ 이런 fomulation은 output space를 output 픽셀과 input image가 주어졌을 때의 다른 픽셀들이 조건부 독립으로 여겨진다는 점에서 "*unstructured*"라고 할 수 있다.
 
 + cGAN은 이와달리 *structured loss*를 학습한다. structured loss는 output의 joint configuration을 penalize한다.
 

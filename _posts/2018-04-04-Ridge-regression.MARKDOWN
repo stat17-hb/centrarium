@@ -7,6 +7,7 @@ author: stat17_hb
 categories: Statistics
 tags: Shrinkage
 cover:  "/assets/header_image3.jpg"
+use_math: true
 ---
 
 원래 Ridge regression은 shrinkage method로써 만들어지지 않았다고 한다. 처음에는 linear regression에서 발생하는 multicollinearity(다중공선성: 독립변수들 간의 강한 상관관계) 문제를 해결하기 위한 방법으로써 고안되었다. 독립변수 x들의 correlation이 크면 $(X'X)^{-1}$가 불안정하게 된다. 여기서 불안정하다는 말의 의미는 X가 조금만 바뀌어도 $X'X$가 많이 바뀐다는 것이다. 결과적으로 이러한 계산의 불안정성 때문에 OLS(Ordinary Least Square) 추정값이 더 이상 BLUE(Best Linear Unbiased Estimator)가 되지 않는다. 만약 완전한 multicollinearity(독립변수들 간의 정확한 직선관계 = linearly dependent)가 있으면 $X'X$가 full rank가 아니게 되어 $(X'X)^{-1}$를 구할 수 없게 된다.

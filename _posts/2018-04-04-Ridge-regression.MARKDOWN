@@ -5,7 +5,7 @@ title:  "Ridge Regression"
 date:   2018-04-04
 author: stat17_hb
 categories: Statistics
-tags: Shurinkage
+tags: Shrinkage
 cover:  "/assets/header_image3.jpg"
 ---
 

@@ -47,11 +47,11 @@ $$\hat{\beta}=arg \; \underset{\beta} min \{||y-X\beta||^2\} \quad \quad \quad \
 
 $$\hat{\beta}=(X'X)^{-1}X'y \quad \quad \quad \quad \quad \quad \quad \quad \quad (5)$$
 
-$\hat{\beta}$는 $\beta$에 대한 unbiased estimator이고 $\sigma^2(X'X)^{-1}$를 covariace matrix로 갖는다.
+$$\hat{\beta}$$는 $$\beta$$에 대한 unbiased estimator이고 $$\sigma^2(X'X)^{-1}$$를 covariace matrix로 갖는다.
 
 $$\hat{\beta} \sim (\beta, \; \sigma^2(X'X)^{-1}) \quad \quad \quad \quad \quad \quad \quad \quad \quad (6)$$
 
-(2)에서 처럼 Normal을 따른다고 가정하면 $\hat{\beta}$는 $\beta$에 대한 MLE이다.
+(2)에서 처럼 Normal을 따른다고 가정하면 $$\hat{\beta}$$는 $$\beta$$에 대한 MLE이다.
 
 linear model의 가장 큰 장점은 추정해야 할 unknown parameter를 독립변수의 개수인 p(혹은 $$\sigma^2$$까지 더하서 p+1)개 까지 줄여준다는 것이다. p가 작은 경우에는 이 방법이 효과적이다. 하지만 p가 큰 경우에는 unbiased estimation에 한계가 있다. 
 
@@ -69,6 +69,13 @@ $$C_i$$를 $$X$$의 i번째 column이라고 하면,
 
 $$C_{i}' = \frac{C_i - mean(C_i)}{\sqrt{sum(C_i - mean(C_i))^2}}$$
 
+결과적으로 ridge regression estimate은 다음과 같이 구해진다.
+
+$$\hat{\beta}_{ridge}=((X'X+\lambda I)^{-1}X'y)=(X'X+\lambda I)^{-1}X'X \hat{\beta}$$
+
+$$\lambda$$가 0이면 $$\hat{\beta}_{ridge} = \hat{\beta}$$가 됨을 알 수 있다.
+
+반면에 $$\lambda$$가 $$\infty$$로 가면 계수들은 0쪽으로 shrink한다.
 
 
 # 4. Reference

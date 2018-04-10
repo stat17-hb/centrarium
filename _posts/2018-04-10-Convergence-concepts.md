@@ -47,5 +47,9 @@ $$[Proof]$$ Chebychev's inequality이용
 
 for every $$\epsilon > 0$$,
 
-$$P(|X_n-\mu|\ge\epsilon)$$
+$$P(|X_n-\mu|\ge\epsilon)=P((\bar{X}_n-\mu)^2\ge \epsilon^2) \le \frac {E(\bar{X}_n-\mu)^2}{\epsilon^2}=\frac{Var(\bar{X}_n)}{\epsilon^2}=\frac{\sigma^2}{n\epsilon^2}$$
+
+따라서, 
+
+$$P(|\bar{X}_n-\mu|<\epsilon)=1-P(|X_n-\mu|\ge\epsilon)\ge 1-\frac{\sigma^2}{(n\epsilon^2)}\rightarrow 1,\;\; as\;\; n\rightarrow \infty$$
 

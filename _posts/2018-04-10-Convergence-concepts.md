@@ -65,17 +65,35 @@ _ _ _
 
 WLLN으로 설명할 수 있는 개념 중에 **consistency**가 있다. consitency는 동일한 sample quantity의 sequence가 n이 $$\infty$$로 갈 때 어떤 상수로 다가간다는 것이다.
 
+$$\hat{\theta}_n \overset{p}{\to} \theta, \quad as \;\; n \to \infty$$
+
+이면 $$\hat{\theta}_n$$을 $$\theta$$에 대한 consistent estimator라고 한다.
+
 ## Example (Consistency of $$S^2$$)
 
-$$E(X_i)=\mu$$이고 $$Var(X_i)=\sigma^2<\infty$$인 iid random variable $$X_1, X_2, ...$$의 sequence가 있다고 할 때,
+$$E(X_i)=\mu$$이고 $$Var(X_i)=\sigma^2<\infty$$인 iid random variable $$X_1, \cdots ,X_n$$의 sequence가 있다고 할 때,
 
-$$S^2_n=\frac{1}{n-1}\Sigma_{i=1}^n (X_i - \bar{X}_n)^2$$
+$$S^2_n=\frac{1}{n-1}\Sigma_{i=1}^n (X_i - \bar{X}_n)^2=\frac{1}{n-1}\{\Sigma_{i=1}^n X_i^2 - n\bar{X}_n^2\}=\frac{n}{n-1}\{\frac{1}{n}\Sigma_{i=1}^n X_i^2 - \bar{X}_n^2\}$$
 
-라고 정의하면, $$S^2_n$$에 대한 WLLN을 Chebyshev's inequality를 이용하여 증명할 수 있다.
+$$n \to \infty$$ 일 때, WLLN을 적용하여 $$ \frac{1}{n}\Sigma_{i=1}^n X_i^2 \overset{p}{\to} \sigma^2+\mu^2$$이고, $$ \bar{X}_n^2 \overset{p}{\to} \mu^2$$이므로
+
+$$S^2_n\overset{p}{\to} \sigma^2$$
+
+---
+
+만약 $$X \sim N(\mu, \sigma^2)$$라 하면,
+
+$$\frac{(n-1)S^2_n}{\sigma^2} \sim \chi^2(n-1)$$이므로 $$Var(S^2_n)=\frac{2\sigma^4}{n-1}$$
 
 $$P(|S^2_n-\sigma^2|\ge \epsilon) \le \frac{E(S^2_n - \sigma^2)^2}{\epsilon^2}=\frac{Var(S^2_n)}{\epsilon^2}$$
 
-이므로, $$S^2_n$$이 $$\Sigma^2$$로 converge in probability하는 충분조건은 $$n \rightarrow  \infty$$일 때, $$Var(S^2_n) \rightarrow 0$$ 인 것이다.
+이므로, $$S^2_n$$이 $$\sigma^2$$로 converge in probability하는 충분조건은 $$n \rightarrow  \infty$$일 때, $$Var(S^2_n) \rightarrow 0$$ 인 것이다.
+
+$$n \to \infty$$일 때, $$\frac{Var(S^2_n)}{\epsilon^2} \to 0$$이므로
+
+$$S^2$$ converge in probability to $$\sigma^2$$이다.
+
+
 
 _ _ _
 

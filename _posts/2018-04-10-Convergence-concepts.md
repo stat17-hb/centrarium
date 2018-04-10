@@ -63,7 +63,7 @@ _ _ _
 
 # Consistency
 
-WLLN으로 설명할 수 있는 개념 중에 **consitency**가 있다. consitency는 동일한 sample quantity의 sequence가 n이 $$\infty$$로 갈 때 어떤 상수로 다가간다는 것이다.
+WLLN으로 설명할 수 있는 개념 중에 **consistency**가 있다. consitency는 동일한 sample quantity의 sequence가 n이 $$\infty$$로 갈 때 어떤 상수로 다가간다는 것이다.
 
 ## Example (Consistency of $$S^2$$)
 
@@ -76,6 +76,8 @@ $$S^2_n=\frac{1}{n-1}\Sigma_{i=1}^n (X_i - \bar{X}_n)^2$$
 $$P(|S^2_n-\sigma^2|\ge \epsilon) \le \frac{E(S^2_n - \sigma^2)^2}{\epsilon^2}=\frac{Var(S^2_n)}{\epsilon^2}$$
 
 이므로, $$S^2_n$$이 $$\Sigma^2$$로 converge in probability하는 충분조건은 $$n \rightarrow \infty$$일 때, $$Var(S^2_n) \rigtharrow 0$$ 인 것이다.
+
+
 
 # Reference
 

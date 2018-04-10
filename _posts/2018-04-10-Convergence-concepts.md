@@ -91,7 +91,7 @@ $$P(|S^2_n-\sigma^2|\ge \epsilon) \le \frac{E(S^2_n - \sigma^2)^2}{\epsilon^2}=\
 
 $$n \to \infty$$일 때, $$\frac{Var(S^2_n)}{\epsilon^2} \to 0$$이므로
 
-$$S^2$$ converge in probability to $$\sigma^2$$이다.
+$$S^2_n$$ converge in probability to $$\sigma^2$$이다.
 
 
 

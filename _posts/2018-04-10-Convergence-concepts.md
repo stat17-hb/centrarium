@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title:  "Convergence concept"
+title:  "Convergence concepts"
 date:   2018-04-10
 author: stat17_hb
 categories: Statistics

@@ -71,6 +71,9 @@ $$C_i$$를 $$X$$의 i번째 column이라고 하면,
 
 $$C_{i}' = \frac{C_i - mean(C_i)}{\sqrt{sum(C_i - mean(C_i))^2}}$$
 
+
+
+
 결과적으로 ridge regression estimate은 다음과 같이 구해진다.
 
 $$\hat{\beta}_{ridge}=((X'X+\lambda I)^{-1}X'y)=(X'X+\lambda I)^{-1}X'X \hat{\beta}$$
@@ -78,6 +81,7 @@ $$\hat{\beta}_{ridge}=((X'X+\lambda I)^{-1}X'y)=(X'X+\lambda I)^{-1}X'X \hat{\be
 $$\lambda$$가 0이면 $$\hat{\beta}_{ridge} = \hat{\beta}$$가 됨을 알 수 있다.
 
 반면에 $$\lambda$$가 $$\infty$$로 가면 계수들은 0쪽으로 shrink한다.
+
 
 
 # Reference

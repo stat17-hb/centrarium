@@ -9,17 +9,15 @@ tags: Convergence
 cover:  "/assets/header_image3.jpg"
 ---
 
-# Convergence Concepts
-
 infinite sample size라는 개념이 이론적으로만 존재하는 것이기는 하지만, finite sample case에 대한 유용한 approximation을 제공해준다. 이는 limit 개념을 활용할 때 expression이 단순해지는 경우가 많기 때문이다.
 
 _ _ _
 
-## Convergence in Probability
+# Convergence in Probability
 
 + Weaker type 중 하나이기 때문에 확인하기 쉽다.
 
-### Definition
+## Definition
 
 모든 $$\epsilon > 0$$에 대하여 다음이 성립하면 $$X_1, X_2, \cdots,$$의 random variable들의 sequence가 random variable $$X$$로 **converges in probability**한다고 한다.
 
@@ -33,7 +31,7 @@ $$\underset{n \rightarrow \infty} {lim} P(|X_n-X|\ge\epsilon)=0 \;\; or, equival
 
 _ _ _
 
-### Weak Law of Large Numbers
+# Weak Law of Large Numbers
 
 $$X_1, X_2, ...$$를 $$E(X_i)=\mu$$이고 $$Var(X_i)=\sigma^2<\infty$$인 **iid** random variables라 하자. $$\bar{X}=(1/n)\Sigma_{i=1}^n X_i$$로 정의하면 모든 $$\epsilon >0$$에 대하여
 
@@ -43,7 +41,7 @@ $$\underset{n \rightarrow \infty} {lim} P(|X_n-\mu|<\epsilon)=1$$
 
 ---
 
-$$[Proof]$$ Chebychev's inequality이용
+$$[Proof]$$ **Chebychev's inequality**이용   
 
 for every $$\epsilon > 0$$,
 
@@ -53,3 +51,16 @@ $$P(|X_n-\mu|\ge\epsilon)=P((\bar{X}_n-\mu)^2\ge \epsilon^2) \le \frac {E(\bar{X
 
 $$P(|\bar{X}_n-\mu|<\epsilon)=1-P(|X_n-\mu|\ge\epsilon)\ge 1-\frac{\sigma^2}{(n\epsilon^2)}\rightarrow 1,\;\; as\;\; n\rightarrow \infty$$
 
+_ _ _
+
+**Chebychev's inequality**
+
+$$\mu=E(X)$$, $$\sigma^2=Var(X)$$이라 하자. 그러면,
+
+$$P(|X-\mu|\ge t) \le \frac{\sigma^2}{t^2}$$
+
+_ _ _
+
+# Reference
+
+George Casella, Roger L.Berger(2001), Statistical Inference 2nd E, Duxbury Press

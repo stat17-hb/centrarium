@@ -51,7 +51,7 @@ $$P(|X_n-\mu|\ge\epsilon)=P((\bar{X}_n-\mu)^2\ge \epsilon^2) \le \frac {E(\bar{X
 
 $$P(|\bar{X}_n-\mu|<\epsilon)=1-P(|X_n-\mu|\ge\epsilon)\ge 1-\frac{\sigma^2}{(n\epsilon^2)}\rightarrow 1,\;\; as\;\; n\rightarrow \infty$$
 
-_ _ _
+---
 
 **Chebychev's inequality**
 
@@ -60,6 +60,8 @@ $$\mu=E(X)$$, $$\sigma^2=Var(X)$$이라 하자. 그러면,
 $$P(|X-\mu|\ge t) \le \frac{\sigma^2}{t^2}$$
 
 _ _ _
+
+WLLN으로 설명할 수 있는 개념 중에 **consitency**가 있다. consitency는 동일한 sample quantity의 sequence가 n이 $$\infty$$로 갈 때 어떤 상수로 다가간다는 것이다.
 
 # Reference
 

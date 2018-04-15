@@ -15,7 +15,7 @@ _ _ _
 
 ## Theorem - Delta Method
 
-$$X_n$$을 $$sqrt{n}(X_n-\theta) \overset{d}{\to} N(0, \sigma^2)$$인 확률변수들의 sequence라고 하자. 
+$$X_n$$을 $$\sqrt{n}(X_n-\theta) \overset{d}{\to} N(0, \sigma^2)$$인 확률변수들의 sequence라고 하자. 
 
 함수 $$g(x)$$가 $$\theta$$에서 미분가능하고 $$g'(\theta)\ne$$0이라고 가정하면
 
@@ -35,14 +35,41 @@ $$g(X_n) \approx g(\theta)+ (X_n-\theta)g'(\theta) + Remainder$$
 
 $$X_n \overset{p}\to \theta$$에 대한 증명은 다음과 같다.
 
-$$P(|X_n-\theta|<\epsilon)=P(|\sqrt{n}(Y_n)-\theta|<\sqrt{n}\epsilon)$$
+---
 
-$$\underset{n \to \infty}{lim} P(|X_n-\theta|<\epsilon)= \underset{n \to \infty}{lim} P(|\sqrt{n}(Y_n)-\theta|<\sqrt{n}\epsilon) = P(|Z|<\infty)=1$$
+$$P(|X_n-\theta|<\epsilon)=P(|\sqrt{n}(X_n)-\theta|<\sqrt{n}\epsilon)$$
+
+$$\underset{n \to \infty}{lim} P(|X_n-\theta|<\epsilon)= \underset{n \to \infty}{lim} P(|\sqrt{n}(X_n)-\theta|<\sqrt{n}\epsilon) = P(|Z|<\infty)=1$$
 
 $$where \quad Z \sim N(0, \sigma^2)$$
 
 $$\therefore \quad X_n \overset{p} \to \theta$$
 
+---
+
+$$g(\theta)$$를 우변으로 넘기면
+
+$$g(X_n) - g(\theta) \approx (X_n-\theta)g'(\theta) + Remainder$$
+
+이고,
+
+$$\sqrt{n}[g(X_n)-g(\theta)] \approx g'(\theta)\sqrt{n}(X_n-\theta)$$
+
+으로 표현할 수 있다.
+
+이제 
+
+$$\sqrt{n}[g(X_n)-g(\theta)] \approx g'(\theta)\sqrt{n}(X_n-\theta)$$
+
+에 **Slutsky's Theorem**을 적용하면
+
+$$g'(\theta) \sqrt{n}(X_n-\theta) \overset{d}\to g'(\theta)Z, \quad \quad where \quad Z \sim N(0, \sigma^2)$$
+
+이 되고, 따라서
+
+$$\sqrt{n}[g(X_n)-g(\theta)]=g'(\theta)\sqrt{n}(X_n-\theta) \overset{d}\to N(0, \sigma^2[g'(\theta)]^2)$$
+
+이 된다.
 
 
 

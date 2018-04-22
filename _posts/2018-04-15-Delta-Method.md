@@ -9,7 +9,7 @@ tags: Delta Method
 cover:  "/assets/header_image3.jpg"
 ---
 
-Delta Method는 중심극한정리(Central Limit Theorem)를 일반화한 개념이라고 할 수 있다. 중심극한정리에서는 limit normal distribution을 갖는 표준화된 확률변수를 다루었다. 하지만 때로는 확률변수 자체의 분포보다는 확률변수의 함수의 분포에 관심이 있을 수 있다. 이때 유용하게 사용될 수 있는 것이 Delta Method이다.
+Delta Method는 중심극한정리(Central Limit Theorem)를 일반화한 개념이라고 할 수 있다. 중심극한정리에서는 normal distribution을 극한분포로 갖는 표준화된 확률변수를 다룬다. 하지만 때로는 확률변수 자체의 분포보다는 확률변수의 함수의 분포에 관심이 있을 수 있다. 이때 유용하게 사용될 수 있는 것이 Delta Method이다.
 
 _ _ _
 
@@ -43,13 +43,15 @@ $$Var(\frac{\hat{p}}{1-\hat{p}})=[\frac{1}{(1-p)^2}]^2 \frac{p(1-p)}{n} = \frac{
 
 _ _ _
 
+이제 중심극한정리의 일반화된 형태로서의 Delta Method를 살펴보자.
+
 ## Theorem - Delta Method - Univariate Case
 
 $$X_n$$을 $$\sqrt{n}(X_n-\theta) \overset{d}{\to} N(0, \sigma^2)$$인 확률변수들의 sequence라고 하자. 
 
 함수 $$g(x)$$가 $$\theta$$에서 미분가능하고 $$g'(\theta)\ne$$0이라고 가정하면
 
-$$\sqrt{n}[g(X_n)-\theta] \overset{d}{\to}N(0, \sigma^2[g'(\theta)]^2)$$
+$$\sqrt{n}[g(X_n-\theta)] \overset{d}{\to}N(0, \sigma^2[g'(\theta)]^2)$$
 
 _ _ _
 
@@ -67,9 +69,9 @@ $$X_n \overset{p}\to \theta$$에 대한 증명은 다음과 같다.
 
 ---
 
-$$P(|X_n-\theta|<\epsilon)=P(|\sqrt{n}(X_n)-\theta|<\sqrt{n}\epsilon)$$
+$$P(|X_n-\theta|<\epsilon)=P(|\sqrt{n}(X_n-\theta)|<\sqrt{n}\epsilon)$$
 
-$$\underset{n \to \infty}{lim} P(|X_n-\theta|<\epsilon)= \underset{n \to \infty}{lim} P(|\sqrt{n}(X_n)-\theta|<\sqrt{n}\epsilon) = P(|Z|<\infty)=1$$
+$$\underset{n \to \infty}{lim} P(|X_n-\theta|<\epsilon)= \underset{n \to \infty}{lim} P(|\sqrt{n}(X_n-\theta)|<\sqrt{n}\epsilon) = P(|Z|<\infty)=1$$
 
 $$where \quad Z \sim N(0, \sigma^2)$$
 
@@ -101,9 +103,69 @@ $$\sqrt{n}[g(X_n)-g(\theta)]=g'(\theta)\sqrt{n}(X_n-\theta) \overset{d}\to N(0, 
 
 이 된다.
 
+_ _ _
 
+## Variance Stabilizing Transformation(분산 안정화 변환)
 
+분산 안정화 변환은 Delta Method의 대표적인 활용 사례이다. Asymtotic variance가 모수에 의존하는 경우에 이를 상수로 바꿔주는 과정이라고 할 수 있다.
 
+몇 가지 예를 들어 보면,
+
+### (1) Poisson
+
+$$X_1, \cdots, X_n \sim Poisson(\lambda)$$라고 할 때,
+
+중심극한정리에 의해 $$\sqrt{(\bar{X}_n-\lambda)} \overset{d}\to N(0, \lambda)$$라고 할 수 있고,
+
+함수 $$h(X)$$가 있을 때, Delta Method에 의해
+
+$$\sqrt{(h(\bar{X}_n)-h(\lambda))} \overset{d}\to N(0, [h'(\lambda)]^2\lambda)$$가 성립한다.
+
+그런데 여기서 분산이 모수인 $$\lambda$$에 의존하는 것을 볼 수 있다. 이를 상수로 만들어주고 싶은데, 그렇게 하기 위해서는 $$[h'(\lambda)]^2 \propto \frac{1}{\lambda}$$ 형태가 되도록하는 $$h(\lambda)$$를 찾아주면 된다.
+
+$$[h'(\lambda)] \propto \frac{1}{\sqrt{\lambda}}$$가 되도록 하는 $$h(\lambda)$$의 형태 중 하나는 $$h(\lambda)=2\sqrt{\lambda}$$가 있다.
+
+### (2) Exponential
+
+$$X_1, \cdots, X_n \sim Exp(\lambda)$$($$\lambda$$는 scale parameter)라고 할 때,
+
+중심극한정리에 의해 $$\sqrt{(\bar{X}_n-\lambda)} \overset{d}\to N(0, \lambda^2)$$라고 할 수 있고,
+
+함수 $$h(X)$$가 있을 때, Delta Method에 의해
+
+$$\sqrt{(h(\bar{X}_n)-h(\lambda))} \overset{d}\to N(0, [h'(\lambda)]^2\lambda^2)$$가 성립한다.
+
+위에서와 같은 방식으로 $$[h'(\lambda)]^2 \propto \frac{1}{\lambda^2}$$ 형태가 되도록하는 $$h(\lambda)$$를 찾아주면 된다.
+
+$$[h'(\lambda)] \propto \frac{1}{\lambda}$$가 되도록 하는 $$h(\lambda)$$의 형태 중 하나는 $$h(\lambda)= log(\lambda)$$가 있다.
+
+### (3) Bernoulli
+
+$$X_1, \cdots, X_n \sim Bernoulli(p)$$, $$\bar{X}_n= \frac{1}{n}\Sigma X_i = \hat{p}_n$$라고 할 때,
+
+중심극한정리에 의해 $$\sqrt{n}(\hat{p}_n-p) \overset{d}\to N(0, p(1-p))$$이고, (여기서 사용된 중심극한정리의 형태를 DeMoivre-Laplace Theorem이라고도 한다.)
+
+함수 $$h(X)$$가 있을 때, Delta Method에 의해
+
+$$\sqrt{(h(\hat{p}_n)-h(p)} \overset{d}\to N(0, [h'(p)]^2p(1-p))$$가 성립한다.
+
+$$h'(p) \propto \frac{1}{\sqrt{p(1-p)}}$$가 되도록하는 $$h(p)$$를 찾으려면 적분을 해야한다.
+
+$$h(p)= \int^p_a \frac{1}{\sqrt{x(1-x)}}dx$$를 풀면 결과적으로
+
+$$2sin^{-1}\sqrt{p}$$가 나온다.
+
+_ _ _
+
+## Second order Delta Method
+
+Delta Method를 사용할 때, $$g'(\theta)=0$$인 경우를 생각해볼 수 있다.
+
+이 경우에는 Taylor Series Expansion에서 1st order term이 사라지기 때문에 2nd order term으로 Delta Method를 전개하게 되고, 수렴하는 분포도 정규분포에서 카이제곱분포로 바뀌게 된다.
+
+$$n[g(X_n)-g(\theta)] \overset{d}\to \sigma^2\frac{g''(\theta)}{2}\chi^2$$
+
+_ _ _
 
 # Reference
 

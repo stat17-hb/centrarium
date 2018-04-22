@@ -13,11 +13,17 @@ Delta Method는 중심극한정리(Central Limit Theorem)의 일반화이다. �
 
 _ _ _
 
-# Delta Method
+## Talyor Seires Expansion
 
 Delta Method는 Talyor Seires Expansion을 통해 유도 된다.
 
-$$X$$가 확률변수이고, $$E(X)=\mu\ne0$$라고 하자. $$g(x)$$가 r차 미분값을 가지고 있다고 할 때, 함수 $$g(\mu)$$를 추정하고 싶다면, 1st order approximation을 통해 $$E[g(X)] \approx g(\mu)$$를 얻을 수 있고, 2nd order approximation을 통해 $$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$를 얻을 수 있다.
+$$g(X) \approx g(\mu) + (X-\mu)g'(\mu) + \frac{(X-\mu)^2g''(\mu)}{2}+ \cdots$$
+
+$$X$$가 확률변수이고, $$E(X)=\mu\ne0$$라고 하자. $$g(x)$$가 r차 미분값을 가지고 있다고 할 때, 함수 $$g(\mu)$$를 추정하고 싶다면, 
+
+1st order approximation을 통해 $$E[g(X)] \approx g(\mu)$$를 얻을 수 있고, 
+
+2nd order approximation을 통해 $$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$를 얻을 수 있다.
 
 _ _ _
 
@@ -29,7 +35,11 @@ $$g(p)=\frac{p}{1-p}$$라 하면
 
 $$g'(p)=\frac{1*(1-p)-p*(-1)}{(1-p)^2}=\frac{1}{(1-p)^2}$$
 
-Var()
+$$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$이므로
+
+$$Var(\frac{\hat{p}}{1-\hat{p}})=[\frac{1}{(1-p)^2}]^2 \frac{p(1-p)}{n} = \frac{p}{n(1-p)^3}$$
+
+이다. 
 
 _ _ _
 

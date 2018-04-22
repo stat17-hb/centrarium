@@ -9,7 +9,7 @@ tags: Delta Method
 cover:  "/assets/header_image3.jpg"
 ---
 
-Delta Method는 중심극한정리(Central Limit Theorem)의 일반화이다. 중심극한정리에서는 limit normal distribution을 갖는 표준화된 확률변수를 다루었다. 하지만 때로는 확률변수 자체의 분포보다는 확률변수의 함수의 분포에 관심이 있을 수 있다. 이때 유용하게 사용될 수 있는 것이 Delta Method이다.
+Delta Method는 중심극한정리(Central Limit Theorem)를 일반화한 개념이라고 할 수 있다. 중심극한정리에서는 limit normal distribution을 갖는 표준화된 확률변수를 다루었다. 하지만 때로는 확률변수 자체의 분포보다는 확률변수의 함수의 분포에 관심이 있을 수 있다. 이때 유용하게 사용될 수 있는 것이 Delta Method이다.
 
 _ _ _
 

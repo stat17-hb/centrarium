@@ -13,7 +13,27 @@ Delta Method는 중심극한정리(Central Limit Theorem)의 일반화이다. �
 
 _ _ _
 
-## Theorem - Delta Method
+# Delta Method
+
+Delta Method는 Talyor Seires Expansion을 통해 유도 된다.
+
+$$X$$가 확률변수이고, $$E(X)=\mu\ne0$$라고 하자. $$g(x)$$가 r차 미분값을 가지고 있다고 할 때, 함수 $$g(\mu)$$를 추정하고 싶다면, 1st order approximation을 통해 $$E[g(X)] \approx g(\mu)$$를 얻을 수 있고, 2nd order approximation을 통해 $$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$를 얻을 수 있다.
+
+_ _ _
+
+## Example
+
+$$X_1, ..., X_n \overset{iid} {\sim} Bernoulli(p)$$라고 할 때, odds인 $$\frac{p}{1-p}$$를 추정하고 싶다고 하자. 보통 success probability $$p$$를 $$\hat{p}$$로 추정하고, odds에 대한 추정치를 $$\frac{\hat{p}}{1-\hat{p}}$$로 사용한다. 여기서 $$\frac{\hat{p}}{1-\hat{p}}$$의 variance 근사치를 구하고 싶을 때 delta method를 사용할 수 있다.
+
+$$g(p)=\frac{p}{1-p}$$라 하면
+
+$$g'(p)=\frac{1*(1-p)-p*(-1)}{(1-p)^2}=\frac{1}{(1-p)^2}$$
+
+Var()
+
+_ _ _
+
+## Theorem - Delta Method - Univariate Case
 
 $$X_n$$을 $$\sqrt{n}(X_n-\theta) \overset{d}{\to} N(0, \sigma^2)$$인 확률변수들의 sequence라고 하자. 
 

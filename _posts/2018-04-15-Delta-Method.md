@@ -105,6 +105,37 @@ $$\sqrt{n}[g(X_n)-g(\theta)]=g'(\theta)\sqrt{n}(X_n-\theta) \overset{d}\to N(0, 
 
 _ _ _
 
+### 참고 - Slutsky's Theorem
+
+만약 $$X_n \overset{d}{\to} X$$이고, 상수 a에 대하여 $$Y_n \overset{p}{\to} a$$이면
+
++ $$Y_nX_n \overset{d}{\to} aX$$
+
++ $$X_n \pm Y_n \overset{d}{\to} X+a$$
+
++ $$\frac{X_n}{Y_n} \overset{d}{\to} \frac{X}{a}$$
+
+가 성립한다.
+
+일반적으로는 위의 명제들이 성립하지 않지만 $$X_n$$와 $$Y_n$$ 중 하나가 상수로 converge in probability이면 성립하게 되는 것으로 이해할 수 있다.
+
+---
+
+#### Example - Normal approximation with estimated variance
+
+$$X_1, \cdots, X_n \sim N(\mu, \sigma^2)$$이고, $$S^2=\frac{1}{n-1}\sum_{i=1}^{n}(X_i-\bar{X_n})^2$$일 때,
+
+$$\frac{\sqrt{n}(\bar{X_n}-\mu)}{S} \sim t_{(n-1)}$$이다.
+
+이 때, $$n$$이 커지면 중심극한정리에 의해 $$N(0,1)$$로 분포수렴(converge in distribution)한다.
+
+이를 Slutsky's Theorem을 통해 설명할 수 있는데,
+
+$$\frac{\sqrt{n}(\bar{X_n}-\mu)}{S}=\frac{\frac{\sqrt{n}(\bar{X_n}-\mu)}{\sigma}}{\frac{S}{\sigma}}$$
+
+에서 $$\frac{\sqrt{n}(\bar{X_n}-\mu)}{\sigma} \overset{d}{\to} N(0,1)$$이고, $$S \overset{p}{\to} \sigma$$이므로 $$\frac{S}{\sigma} \overset{p}{\to}1$$이 되어 Slutsky's Theorem에 의해 n이 커질 때 t분포가 표준정규분포로 수렴함을 보일 수 있다.
+_ _ _
+
 ## Variance Stabilizing Transformation(분산 안정화 변환)
 
 분산 안정화 변환은 Delta Method의 대표적인 활용 사례이다. Asymtotic variance가 모수에 의존하는 경우에 이를 상수로 바꿔주는 과정이라고 할 수 있다.

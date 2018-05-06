@@ -109,11 +109,11 @@ _ _ _
 
 만약 $$X_n \overset{d}{\to} X$$이고, 상수 a에 대하여 $$Y_n \overset{p}{\to} a$$이면
 
-+ $$Y_nX_n \overset{d}{\to} aX$$
++ $$Y_nX_n \overset{d}{\to} aX$$.
 
-+ $$X_n \pm Y_n \overset{d}{\to} X+a$$
++ $$X_n \pm Y_n \overset{d}{\to} X+a$$.
 
-+ $$\frac{X_n}{Y_n} \overset{d}{\to} \frac{X}{a}$$
++ $$\frac{X_n}{Y_n} \overset{d}{\to} \frac{X}{a}$$.
 
 가 성립한다.
 
@@ -134,6 +134,7 @@ $$\frac{\sqrt{n}(\bar{X_n}-\mu)}{S} \sim t_{(n-1)}$$이다.
 $$\frac{\sqrt{n}(\bar{X_n}-\mu)}{S}=\frac{\frac{\sqrt{n}(\bar{X_n}-\mu)}{\sigma}}{\frac{S}{\sigma}}$$
 
 에서 $$\frac{\sqrt{n}(\bar{X_n}-\mu)}{\sigma} \overset{d}{\to} N(0,1)$$이고, $$S \overset{p}{\to} \sigma$$이므로 $$\frac{S}{\sigma} \overset{p}{\to}1$$이 되어 Slutsky's Theorem에 의해 n이 커질 때 t분포가 표준정규분포로 수렴함을 보일 수 있다.
+
 _ _ _
 
 ## Variance Stabilizing Transformation(분산 안정화 변환)

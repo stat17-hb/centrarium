@@ -21,9 +21,11 @@ $$g(X) \approx g(\mu) + (X-\mu)g'(\mu) + \frac{(X-\mu)^2g''(\mu)}{2}+ \cdots$$
 
 $$X$$가 확률변수이고, $$E(X)=\mu\ne0$$라고 하자. $$g(x)$$가 r차 미분값을 가지고 있다고 할 때, 함수 $$g(\mu)$$를 추정하고 싶다면, 
 
-1st order approximation을 통해 $$E[g(X)] \approx g(\mu)$$를 얻을 수 있고, 
+1st order approximation을 통해 
 
-2nd order approximation을 통해 $$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$를 얻을 수 있다.
+$$E[g(X)] \approx g(\mu)$$와
+
+$$Var[g(X)] \approx [g'(\mu)]^2Var(X)$$를 얻을 수 있다.
 
 _ _ _
 

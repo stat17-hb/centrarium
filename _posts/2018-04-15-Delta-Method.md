@@ -53,7 +53,7 @@ $$X_n$$을 $$\sqrt{n}(X_n-\theta) \overset{d}{\to} N(0, \sigma^2)$$인 확률변
 
 함수 $$g(x)$$가 $$\theta$$에서 미분가능하고 $$g'(\theta)\ne$$0이라고 가정하면
 
-$$\sqrt{n}[g(X_n-\theta)] \overset{d}{\to}N(0, \sigma^2[g'(\theta)]^2)$$
+$$\sqrt{n}[g(X_n)-g(\theta)] \overset{d}{\to}N(0, \sigma^2[g'(\theta)]^2)$$
 
 _ _ _
 

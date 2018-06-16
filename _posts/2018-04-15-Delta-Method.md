@@ -149,11 +149,11 @@ _ _ _
 
 $$X_1, \cdots, X_n \sim Poisson(\lambda)$$라고 할 때,
 
-중심극한정리에 의해 $$\sqrt{(\bar{X}_n-\lambda)} \overset{d}\to N(0, \lambda)$$라고 할 수 있고,
+중심극한정리에 의해 $$\sqrt{n}(\bar{X}_n-\lambda) \overset{d}\to N(0, \lambda)$$라고 할 수 있고,
 
 함수 $$h(X)$$가 있을 때, Delta Method에 의해
 
-$$\sqrt{(h(\bar{X}_n)-h(\lambda))} \overset{d}\to N(0, [h'(\lambda)]^2\lambda)$$가 성립한다.
+$$\sqrt{n}(h(\bar{X}_n)-h(\lambda)) \overset{d}\to N(0, [h'(\lambda)]^2\lambda)$$가 성립한다.
 
 그런데 여기서 분산이 모수인 $$\lambda$$에 의존하는 것을 볼 수 있다. 이를 상수로 만들어주고 싶은데, 그렇게 하기 위해서는 $$[h'(\lambda)]^2 \propto \frac{1}{\lambda}$$ 형태가 되도록하는 $$h(\lambda)$$를 찾아주면 된다.
 
@@ -163,11 +163,11 @@ $$[h'(\lambda)] \propto \frac{1}{\sqrt{\lambda}}$$가 되도록 하는 $$h(\lamb
 
 $$X_1, \cdots, X_n \sim Exp(\lambda)$$($$\lambda$$는 scale parameter)라고 할 때,
 
-중심극한정리에 의해 $$\sqrt{(\bar{X}_n-\lambda)} \overset{d}\to N(0, \lambda^2)$$라고 할 수 있고,
+중심극한정리에 의해 $$\sqrt{n}(\bar{X}_n-\lambda) \overset{d}\to N(0, \lambda^2)$$라고 할 수 있고,
 
 함수 $$h(X)$$가 있을 때, Delta Method에 의해
 
-$$\sqrt{(h(\bar{X}_n)-h(\lambda))} \overset{d}\to N(0, [h'(\lambda)]^2\lambda^2)$$가 성립한다.
+$$\sqrt{n}(h(\bar{X}_n)-h(\lambda)) \overset{d}\to N(0, [h'(\lambda)]^2\lambda^2)$$가 성립한다.
 
 위에서와 같은 방식으로 $$[h'(\lambda)]^2 \propto \frac{1}{\lambda^2}$$ 형태가 되도록하는 $$h(\lambda)$$를 찾아주면 된다.
 
@@ -181,7 +181,7 @@ $$X_1, \cdots, X_n \sim Bernoulli(p)$$, $$\bar{X}_n= \frac{1}{n}\Sigma X_i = \ha
 
 함수 $$h(X)$$가 있을 때, Delta Method에 의해
 
-$$\sqrt{(h(\hat{p}_n)-h(p)} \overset{d}\to N(0, [h'(p)]^2p(1-p))$$가 성립한다.
+$$\sqrt{n}(h(\hat{p}_n)-h(p)) \overset{d}\to N(0, [h'(p)]^2p(1-p))$$가 성립한다.
 
 $$h'(p) \propto \frac{1}{\sqrt{p(1-p)}}$$가 되도록하는 $$h(p)$$를 찾으려면 적분을 해야한다.
 

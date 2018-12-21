@@ -37,5 +37,9 @@ cover:  "/assets/header_image3.jpg"
 
 일반적으로 m의 기본 값은 분류문제에서는 $$\sqrt{p}$$, 회귀문제에서는 $$p/3$$이다(랜덤 포레스트를 만든 Leo Breiman과 Adele Cutler가 추천하는 값이다). 랜덤 포레스트가 m에 민감하지 않기 때문에 굳이 m에 대한 미세조정(fine tuning)을 할 필요는 없다고 한다 [[2]](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3). 하지만 튜닝 자체를 하지 않아도 되는 것은 아니다. 문제에 따라 m의 기본값을 사용할 때 성능이 좋지 않은 경우가 있을 수 있기 때문이다.
 
+{% highlight python %}
+import numpy as np
+{% endhighlight %}
+
 
 [1]: https://web.stanford.edu/~hastie/ElemStatLearn/

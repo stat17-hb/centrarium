@@ -475,7 +475,7 @@ $$l_i$$와 $$r_i$$는 i번째 parent node에서 어떻게 split이 되었고, i�
 
 $$E(\{ \theta \}, \{l_i\}, \{r_i\})=\sum_{j \in N_c}|S_j|H(S_j)$$
 
-여기서 $$|S_j|$$는 j번째 child node의 인스턴스 개수이고, $$H(S_j)$$는 child node의 entropy이다. 이제 ojective function을 minimize 시켜야 하는데 이를 direct로 푸는 것은 쉽지 않아서 근사적인 방법을 사용해야 한다.
+여기서 $$\|S_j\|$$는 j번째 child node의 인스턴스 개수이고, $$H(S_j)$$는 child node의 entropy이다. 이제 ojective function을 minimize 시켜야 하는데 이를 direct로 푸는 것은 쉽지 않아서 근사적인 방법을 사용해야 한다.
 
 ### Lsearch
 
@@ -484,7 +484,7 @@ Lsearch의 핵심은 feasible solution으로 부터 트리 분할을 시작한�
 
 ### Cluster Search
 
-Cluster search는 branch optimization 과정이 global하게 진행된다는 점에서 Lsearch와 차이가 있다. 먼저 $$|2N_p|$$개의 temporary child node들이 전통적이 트리 기반 방법을 통해 만들어진다. 그 다음에는 temporary node들이 $$M=|N_c|$$개의 그룹으로 클러스터링 된다. 다시 말해, node clustering을 통해 child node를 병합하는 것이다.
+Cluster search는 branch optimization 과정이 global하게 진행된다는 점에서 Lsearch와 차이가 있다. 먼저 $$\|2N_p\|$$개의 temporary child node들이 전통적이 트리 기반 방법을 통해 만들어진다. 그 다음에는 temporary node들이 $$M=\|N_c\|$$개의 그룹으로 클러스터링 된다. 다시 말해, node clustering을 통해 child node를 병합하는 것이다.
 
 {% highlight python %}
 

@@ -35,11 +35,25 @@ cover:  "/assets/header_image3.jpg"
 
 배깅에서는 각 분할에 p개의 예측변수를 모두 사용한다. 만약 데이터에 매우 강한 설명변수가 하나 있고, 다수의 적당히 강한 설명변수가 있다고 해보자. 그러면 모든 부트스트랩 데이터세트의 맨 위 분할(top split)에 가장 강한 설명 변수가 사용될 것이다. 따라서 배깅된 트리들은 모두 서로 상당히 유사할 것이고, 결과적으로 단일 트리에 비해 모델의 분산을 크게 줄이지 못할 것이다. 랜덤포레스트는 각 분할에서 랜덤하게 선택된 p보다 작은 m개의 예측변수를 사용하는 것을 통해 트리들의 상관성을 줄인다. 이를 통해 앙상블 모델의 분산을 배깅에서보다 크게 줄 일 수 있게 된다.
 
-일반적으로 m의 기본 값은 분류문제에서는 $$\sqrt{p}$$, 회귀문제에서는 $$p/3$$이다(랜덤 포레스트를 만든 Leo Breiman과 Adele Cutler가 추천하는 값이다). 랜덤 포레스트가 m에 민감하지 않기 때문에 굳이 m에 대한 미세조정(fine tuning)을 할 필요는 없다고 한다 [[2]](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3). 하지만 튜닝 자체를 하지 않아도 되는 것은 아니다. 문제에 따라 m의 기본값을 사용할 때 성능이 좋지 않은 경우가 있을 수 있기 때문이다.
+일반적으로 m의 기본 값은 분류문제에서는 $$\sqrt{p}$$, 회귀문제에서는 $$p/3$$이다(랜덤 포레스트를 만든 Leo Breiman과 Adele Cutler가 추천하는 값이다). 랜덤 포레스트가 m에 민감하지 않기 때문에 굳이 m에 대한 미세조정(fine tuning)을 할 필요는 없다고 한다 [[2]](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3).
+
+파이썬을 이용한 예제를 통해 이에 대해 살펴보자.
 
 {% highlight python %}
+# Load libraries
+import pandas as pd
 import numpy as np
+import random
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from sklearn.ensemble import RandomForestRegressor
 {% endhighlight %}
 
+{% highlight python %}
+# Load data
+from sklearn.datasets import load_boston
+boston = load_boston()
+boston.DESCR
+{% endhighlight %}
 
 [1]: https://web.stanford.edu/~hastie/ElemStatLearn/

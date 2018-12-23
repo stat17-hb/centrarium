@@ -24,7 +24,7 @@ cover:  "/assets/header_image3.jpg"
 랜덤 포레스트 알고리즘([\[1\]][1] p.588)은 다음과 같다:
 
 <a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rfalgo.PNG?raw=true" data-lightbox="rfalgo" data-title="rfalgo">
-  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rfalgo.PNG?raw=true" title="rfalgo" width="200">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rfalgo.PNG?raw=true" title="rfalgo" width="400">
 </a>
 
 ## Diversity in Ensemble Model
@@ -117,7 +117,7 @@ plt.show()
 {% endhighlight %}
 
 <a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" data-lightbox="nfeatures" data-title="nfeatures">
-  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="200">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="400">
 </a>
 
 ## Out of Bag Samples
@@ -166,8 +166,30 @@ plt.show()
 {% endhighlight %}
 
 <a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/oob.png?raw=true" data-lightbox="oob" data-title="oob">
-  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/oob.png?raw=true" title="oob" width="200">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/oob.png?raw=true" title="oob" width="400">
 </a>
+
+## Feature importance
+
+변수 중요도는 OOB 데이터를 permuting 해서 계산된다. 각각의 트리에 대해, OOB 데이터에 대한 prediction error(분류인 경우 error rate, 회귀인 경우 MSE)를 계산한다. 그런 다음 같은 작업을 각 변수들의 순서를 섞어서(permutation) 진행한다. 이렇게 계산된 두 개의 prediction error의 차이를 모든 트리에 대해 평균을 낸 후 차이의 표준편차로 표준화를 해서 계산된 값이 변수 중요도이다.
+
+{% highlight python %}
+# Feature importance
+features = list(all_boston)[0:13]
+importances=rf.feature_importances_
+indices = np.argsort(importances)
+
+plt.title('Feature Importances')
+plt.barh(range(len(indices)), importances[indices], align='center')
+plt.yticks(range(len(indices)), [features[i] for i in indices])
+plt.xlabel('Relative Importance')
+plt.show()
+{% endhighlight %}
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/imp.png?raw=true" data-lightbox="imp" data-title="imp">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/imp.png?raw=true" title="imp" width="400">
+</a>
+
 
 
 

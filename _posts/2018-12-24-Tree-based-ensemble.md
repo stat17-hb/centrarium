@@ -37,7 +37,7 @@ cover:  "/assets/header_image3.jpg"
 
 일반적으로 m의 기본 값은 분류문제에서는 $$\sqrt{p}$$, 회귀문제에서는 $$p/3$$이다(랜덤 포레스트를 만든 Leo Breiman과 Adele Cutler가 추천하는 값이다). 랜덤 포레스트가 m에 민감하지 않기 때문에 굳이 m에 대한 미세조정(fine tuning)을 할 필요는 없다고 한다 [[2]](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3).
 
-파이썬을 이용한 예제를 통해 이에 대해 살펴보자.
+파이썬을 이용한 예제를 통해 이에 대해 살펴보자. scikit learn 라이브러리에서 불러올 수 있는 boston 데이터를 사용하였다.
 
 {% highlight python %}
 # Load libraries
@@ -120,6 +120,8 @@ plt.show()
   <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="400">
 </a>
 
+6일 때가 가장 낮은 값을 보이지만 $p/3$에 가까운 4도 이와 거의 비슷한 결과를 보이고 있다.
+
 ## Out of Bag Samples
 
 배깅된 트리는 평균적으로 관측치들의 약 2/3을 이용한다. Out of Bag(이하 OOB) 샘플은 배깅된 트리를 적합하는데 사용되지 않은 나머지 약 1/3의 관측치들이다.
@@ -190,8 +192,238 @@ plt.show()
   <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/imp.png?raw=true" title="imp" width="400">
 </a>
 
+## User defined function
+
+[https://github.com/llSourcell/random_forests/blob/master/Random%20Forests%20.ipynb](https://github.com/llSourcell/random_forests/blob/master/Random%20Forests%20.ipynb)
+
+위의 코드를 조금 수정하여 사용자 정의 함수로 랜덤 포레스트를 구현해 보았다. pandas dataframe 형태로 데이터를 넣어도 코드가 실행 되도록 조정하였다. 또한, random seed를 부여하여 출력되는 값을 고정하려고 하였는데 랜덤 함수가 들어가는 부분에는 모두 seed를 붙여였지만 출력값이 계속 달라지는 결과를 얻었다. 이 부분은 추후 수정이 필요해 보인다.
 
 
+{% highlight python %}
+# Load libraries
+import numpy as np
+import random
+from math import sqrt
+
+
+# Build a decision tree
+def build_tree(dataset, max_depth, min_size, n_features):
+    # Building the tree involves creating the root node and 
+	root = get_split(dataset, n_features, random_state)
+    # calling the split() function that then calls itself recursively to build out the whole tree.
+	split(root, max_depth, min_size, n_features, 1)
+	return root
+
+# 각 노드에서 best split을 찾는데 사용하는 함수
+def get_split(dataset, n_features, random_state):
+    class_values = list(set([row[-1] for row in dataset]))
+    b_index, b_value, b_score, b_groups = 999, 999, 999, None
+    # 각 split 마다 사용할 변수를 전체 변수 중 n_features 만큼만 랜덤하게 선택 
+    random.seed(random_state)
+    features = list(np.random.choice(range(len(dataset[0])-1), n_features, replace=False))
+    
+    for index in features:
+        for row in dataset:
+            groups = test_split(index, row[index], dataset)
+            gini = gini_index(groups, class_values)
+            if gini < b_score:
+                b_index, b_value, b_score, b_groups = index, row[index], gini, groups
+    return {'index':b_index, 'value':b_value, 'groups':b_groups}
+
+# Left child node, Right child node로 관측값들 분류
+def test_split(index, value, dataset):
+	left, right = [], []
+	for row in dataset:
+		if row[index] < value:
+			left.append(row)
+		else:
+			right.append(row)
+	return left, right
+
+# gini index 계산
+def gini_index(groups, class_values):
+	gini = 0.0
+	for class_value in class_values:
+		for group in groups:
+			size = len(group)
+			if size == 0:
+				continue
+			proportion = [row[-1] for row in group].count(class_value) / float(size)
+			gini += (proportion * (1.0 - proportion))
+	return gini
+
+def to_terminal(group):
+    #select a class value for a group of rows. 
+	outcomes = [row[-1] for row in group]
+    #returns the most common output value in a list of rows.
+	return max(set(outcomes), key=outcomes.count)
+ 
+# 새로운 child node를 만들거나 더 이상 split 할 수 없으면 terminal node 생성
+def split(node, max_depth, min_size, n_features, depth):
+    
+	left, right = node['groups']
+	del(node['groups']) # 더 이상 필요 없어서 제거
+    
+    # Left, Right child node에 인스턴스들이 있는지 확인하고 없으면 terminal node 생성
+	if not left or not right:
+		node['left'] = node['right'] = to_terminal(left + right)
+		return
+    
+    # Maximum depth에 도달하면 terminal node 생성 
+	if depth >= max_depth:
+		node['left'], node['right'] = to_terminal(left), to_terminal(right)
+		return
+    
+    # We then process the left child, creating a terminal node if the group of rows is too small, 
+    # otherwise creating and adding the left node in a depth first fashion until the bottom of 
+    # the tree is reached on this branch.
+
+    # process left child
+	if len(left) <= min_size:
+		node['left'] = to_terminal(left)
+	else:
+		node['left'] = get_split(left, n_features, random_state)
+		split(node['left'], max_depth, min_size, n_features, depth+1)
+	
+    # process right child
+    # The right side is then processed in the same manner, 
+    # as we rise back up the constructed tree to the root.
+	if len(right) <= min_size:
+		node['right'] = to_terminal(right)
+	else:
+		node['right'] = get_split(right, n_features, random_state)
+		split(node['right'], max_depth, min_size, n_features, depth+1)
+ 
+    
+# Make a prediction with a decision tree
+def predict(node, row):
+    # Making predictions with a decision tree involves navigating the  tree with the specifically provided row of data.
+    # Again, we can implement this using a recursive function, where the same prediction routine is 
+    # called again with the left or the right child nodes, depending on how the split affects the provided data.
+    # We must check if a child node is either a terminal value to be returned as the prediction
+    # , or if it is a dictionary node containing another level of the tree to be considered.
+	if row[node['index']] < node['value']:
+		if isinstance(node['left'], dict):
+			return predict(node['left'], row)
+		else:
+			return node['left']
+	else:
+		if isinstance(node['right'], dict):
+			return predict(node['right'], row)
+		else:
+			return node['right']
+ 
+# Bootstrap sample index 추출
+def bootstrap(dataset, random_state):
+    random.seed(random_state)
+    N = len(dataset)
+    idx = list(np.random.choice(np.arange(N), np.int(N), replace=False))
+    bootstrap_sample = list()
+    for i in idx:
+        bootstrap_sample.append(dataset[i])
+    return(bootstrap_sample)
+
+# Make a prediction with a list of bagged trees responsible for making a prediction with each decision tree and 
+# combining the predictions into a single return value. 
+# This is achieved by selecting the most common prediction from the list of predictions made by the bagged trees.
+def bagging_predict(trees, row):
+	predictions = [predict(tree, row) for tree in trees]
+	return max(set(predictions), key=predictions.count)
+ 
+
+# Random Forest main function
+# responsible for creating the samples of the training dataset, training a decision tree on each,
+# then making predictions on the test dataset using the list of bagged trees.
+def randomForest(train, test, max_depth, min_size, n_trees, n_features, random_state):
+	trees = list()
+	for i in range(n_trees):
+		bootstrap_sample = bootstrap(train, random_state)
+		tree = build_tree(bootstrap_sample, max_depth, min_size, n_features)
+		trees.append(tree)
+	predictions = [bagging_predict(trees, row) for row in test]
+	return(predictions)
+{% endhighlight %}
+
+이번에는 classification 문제에 랜덤포레스트를 사용하기 위해 scikit learn에서 불러올 수 있는 breast cancer 데이터를 사용하였다.
+
+{% highlight python %}
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+bc = load_breast_cancer()
+all_data = pd.concat([pd.DataFrame(bc.data, columns=bc.feature_names), pd.DataFrame(bc.target, columns=["target"])], axis=1)
+
+# plit test & train data
+N = len(all_data)
+ratio = 0.75
+random.seed(0)
+idx_train = list(np.random.choice(np.arange(N), np.int(ratio * N), replace=False))
+idx_test = list(set(np.arange(N)).difference(idx_train))  
+
+train = all_data.iloc[idx_train,:]
+test = all_data.iloc[idx_test,:]
+
+# pandas dataframe to list
+def transform_data(pd_dataframe):
+    dataset = list()
+    for i in range(len(pd_dataframe)):
+        dataset.append(pd_dataframe.iloc[i,:].tolist())
+        dataset[i][-1] = int(dataset[i][-1] ) 
+    return(dataset)
+
+traindata = transform_data(train)
+testdata = transform_data(test)
+  
+# Hyperparameter 지정
+random_state=0
+max_depth = 10
+min_size = 1
+n_features = int(sqrt(len(traindata[0])-1))
+n_trees = 20
+
+random.seed(0)
+rf_pred = randomForest(traindata, testdata, max_depth, min_size, n_trees, n_features, random_state)
+y_test = [ row[-1] for row in testdata ]
+accuracy = np.mean(np.array(y_test) == np.array(rf_pred))
+accuracy # 0.9440559440559441
+# 왜 seed 고정이 안될까...
+{% endhighlight %}
+
+scikit learn의 randomForestClassifier를 이용한 결과와 비교해보자.
+
+{% highlight python %}
+import pandas as pd
+import numpy as np
+import random
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_breast_cancer
+bc = load_breast_cancer()
+bc.DESCR
+
+all_data = pd.concat([pd.DataFrame(bc.data, columns=bc.feature_names), pd.DataFrame(bc.target, columns=["target"])], axis=1)
+
+N = len(all_data)
+ratio = 0.75
+random.seed(0)
+idx_train = np.random.choice(np.arange(N), np.int(ratio * N), replace=False)
+idx_test = list(set(np.arange(N)).difference(idx_train))
+
+X_train = all_data.iloc[idx_train, 0:30]
+y_train = all_data.iloc[idx_train, 30]
+X_test = all_data.iloc[idx_test, 0:30]
+y_test = all_data.iloc[idx_test, 30]
+
+random.seed(0)
+rf = RandomForestClassifier(n_estimators=20, oob_score=True, 
+                            max_depth=10, max_features=int(round(np.sqrt(X_train.shape[1]))),
+                            random_state=0, n_jobs=-1)
+rf.fit(X_train, y_train)
+
+rf_pred = rf.predict(X_test)
+accuracy = np.mean(y_test == rf_pred)
+print(f'Mean accuracy score: {accuracy:.3}')
+{% endhighlight %}
+
+Mean accuracy score: 0.965
 
 
 {% highlight python %}

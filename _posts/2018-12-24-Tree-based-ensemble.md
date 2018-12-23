@@ -499,7 +499,3 @@ Cluster search는 branch optimization 과정이 global하게 진행된다는 점
 [3] Juan J. Rodrı´guez, Ludmila I. Kuncheva. (2006). Rotation Forest: A New Classifier Ensemble Method
 
 [4] Jamie Shotton et.al. (2013). Decision Jungles:Compact and Rich Models for Classification
-
-[1]: https://web.stanford.edu/~hastie/ElemStatLearn/
-
-[2]: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3

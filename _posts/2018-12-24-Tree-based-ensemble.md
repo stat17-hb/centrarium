@@ -47,13 +47,82 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.ensemble import RandomForestRegressor
-{% endhighlight %}
 
-{% highlight python %}
 # Load data
 from sklearn.datasets import load_boston
 boston = load_boston()
 boston.DESCR
+X_boston = pd.DataFrame(boston.data, columns=boston.feature_names)
+y_boston = pd.DataFrame(boston.target, columns=["MEDV"])
+all_boston = pd.concat([X_boston, y_boston], axis=1)
+all_boston.head()
+{% endhighlight %}
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/boston.PNG?raw=true" data-lightbox="boston" data-title="boston">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/boston.PNG?raw=true" title="boston" width="400">
+</a>
+
+{% highlight python %}
+# Split training and test set
+N = len(all_boston)
+ratio = 0.75
+random.seed(0)
+idx_train = np.random.choice(np.arange(N), np.int(ratio * N), replace=False)
+idx_test = list(set(np.arange(N)).difference(idx_train))
+
+X_train = all_boston.iloc[idx_train, 0:13]
+y_train = all_boston.iloc[idx_train, 13]
+X_test = all_boston.iloc[idx_test, 0:13]
+y_test = all_boston.iloc[idx_test, 13]
+{% endhighlight %}
+
+{% highlight python %}
+# Tuning number of features at each split
+cv_error=[]
+cv_mse=[]
+N = len(all_boston)
+random.seed(0)
+idx_fold = np.random.choice(np.arange(5), N, replace=True)
+for n_features in np.array(range(13))+1:
+    temp_mse = []
+    temp_error = []
+    for fold in range(5):
+        print(fold+1, "th fold ", "n_features=",n_features)
+        idx_test = idx_fold==fold
+        idx_train = idx_fold!=fold
+        X_train = all_boston.iloc[idx_train, 0:13]
+        y_train = all_boston.iloc[idx_train, 13]
+        X_test = all_boston.iloc[idx_test, 0:13]
+        y_test = all_boston.iloc[idx_test, 13]
+    
+        rf = RandomForestRegressor(n_estimators=500, max_features=n_features, 
+                                   random_state=0, n_jobs=-1, oob_score=True)
+        rf.fit(X_train, y_train)
+        rf_pred = rf.predict(X_test)
+        temp_mse.append(np.mean((rf_pred-np.array(y_test).flatten())**2))
+        temp_error.append(1-rf.score(X_test,y_test))
+    cv_mse.append(np.mean(temp_mse))
+    cv_error.append(np.mean(temp_error))
+{% endhighlight %}
+
+{% highlight python %}
+# Draw plot
+n_features = range(1,14)
+plt.style.use('ggplot')
+plt.plot(n_features, cv_mse, label="CV Error")
+plt.xlabel('Number of features at each split')
+plt.ylabel('Error')
+plt.legend()
+plt.show()
+{% endhighlight %}
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" data-lightbox="nfeatures" data-title="nfeatures">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="400">
+</a>
+
+
+{% highlight python %}
+
 {% endhighlight %}
 
 [1]: https://web.stanford.edu/~hastie/ElemStatLearn/

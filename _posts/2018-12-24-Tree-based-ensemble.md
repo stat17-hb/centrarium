@@ -425,9 +425,81 @@ print(f'Mean accuracy score: {accuracy:.3}')
 
 Mean accuracy score: 0.965
 
+# Rotation Forest
+
+## Intro
+
+로테이션 포레스트는 특징 추출(feature extraction)에 기반한 앙상블 기법이다. base learner가 사용할 훈련 데이터(training data)를 만들기 위해, 예측변수들을 K개의 부분집합(subset)으로 랜덤하게 분할한 후 주성분 분석(PCA; Principal Component Analysis)를 각각의 부분집합에 적용한다. 데이터의 변동성(variablility) 정보를 보존하기 위해 모든 주성분(Principal Components)들이 사용된다. 결과적으로, base learner가 사용할 새로운 예측변수들을 만들기 위해 K개의 축 회전이 발생하는 것이다. 축을 회전시키는 접근은 앙상블 모델의 다양성을 높이기 위한 것이다. 다양성이 높아지는 이유는 축 회전을 통해 새로운 변수들이 추출(feature extraction)되었기 때문이다[3]). 로테이션 포레스트는 사선 방향으로 결정 경계(decision boundary)를 만들 수 있다는 장점이 있지만, 분산 방향이 특정 구조로 나타나는 데이터가 아니라면 성능향상을 기대하기 어렵다는 단점이 있다.
+
+## Algorithm
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest1.png?raw=true" data-lightbox="rotation_forest1" data-title="rotation_forest1">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest1.png?raw=true" title="rotation_forest1" width="400">
+</a>
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest2.png?raw=true" data-lightbox="rotation_forest2" data-title="rotation_forest2">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest2.png?raw=true" title="rotation_forest2" width="400">
+</a>
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest3.png?raw=true" data-lightbox="rotation_forest3" data-title="rotation_forest3">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest3.png?raw=true" title="rotation_forest3" width="400">
+</a>
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest4.png?raw=true" data-lightbox="rotation_forest4" data-title="rotation_forest4">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest4.png?raw=true" title="rotation_forest4" width="400">
+</a>
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest5.png?raw=true" data-lightbox="rotation_forest5" data-title="rotation_forest5">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/rotation_forest5.png?raw=true" title="rotation_forest5" width="400">
+</a>
+
+# Decision Jungle
+
+## Intro
+
+앞에서 살펴본 랜덤 포레스트는 모델을 구축하는데 드는 시간이 짧고, 예측 정확도가 높다는 장점이 있다. 하지만 트리를 전개시키는 과정에서 노드 수가 기하급수적으로 증가하기 때문에 메모리가 많이 필요하다는 단점이 있다. 모바일이나 임베디드 프로세서의 경우 메모리 리소스가 제한적이기 때문에 트리의 깊이를 제한 할 수 밖에 없고, 이에 따라 모델의 정확도도 낮아지게 된다. 디시전 정글은 다범주(multi-class) 분류 문제를 풀기 위해 만들어진 [DAG(Directed Acyclic Graphs)](https://en.wikipedia.org/wiki/Directed_acyclic_graph) 모델의 앙상블이다. 마이크로소프트 리서치에서 개발한 알고리즘이고, 마이크로소프트의 머신러닝 플랫폼인 [Azure](https://docs.microsoft.com/en-us/azure/machine-learning/studio-module-reference/multiclass-decision-jungle)에 적용되어 있다. 전통적인 트리 모델과는 달리 디시전 정글은 parent node들이 모든 child node들과 연결되는 것을 허용한다. 좀 더 정확히 말하면, 두 개 이상의 child node 사이의 병합을 허용하는 것이다. 디시전 정글은 랜덤 포레스트보다 모델 구축에 걸리는 시간은 증가하지만 메모리 사용은 획기적으로 감소하고, 예측 성능도 확보할 수 있다[[4]](http://www.nowozin.net/sebastian/papers/shotton2013jungles.pdf).
+
+## Algorithm
+
+디시전 정글의 original paper([[4]](http://www.nowozin.net/sebastian/papers/shotton2013jungles.pdf))를 보면 아래의 Figure를 통해 알고리즘을 설명하고 있다.
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/df_fig1.PNG?raw=true" data-lightbox="dj_fig1" data-title="dj_fig1">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/dj_fig1.PNG?raw=true" title="dj_fig1" width="400">
+</a>
+
+(b)에서 $$N_p$$는 parent node들의 집합이고, $$N_c$$는 child node들의 집합이다. 여기서 child node의 maximum 값을 지정하여 노드 수가 기하급수적으로 늘어나는 것을 방지한다. $$\theta_i$$는 i번째 parent node가 split에 어떤 변수를 사용했는지, split point가 어디인지를 나타내는 파라미터들이다. $$S_i^L$$은 i번째 parent node의 left child node이고, $$S_i^R$$은 i번째 parent node의 right child node이다.
+
+$$l_i$$와 $$r_i$$는 i번째 parent node에서 어떻게 split이 되었고, i번째 parent node의 left child node와 right child node가 무엇인지가 다 로그로 기록된다는 것을 의미한다. 이 로그 데이터를 바탕으로 최적의 split을 찾는 과정을 반복하는데, 이러한 점 때문에 모델 구축 과정이 랜덤 포레스트보다 더 오래 걸리게 된다.
+
+디시전 정글의 objective function은 다음과 같다:
+
+$$E(\{ \theta \}, \{l_i\}, \{r_i\})=\sum_{j \in N_c}|S_j|H(S_j)$$
+
+여기서 $$|S_j|$$는 j번째 child node의 인스턴스 개수이고, $$H(S_j)$$는 child node의 entropy이다. 이제 ojective function을 minimize 시켜야 하는데 이를 direct로 푸는 것은 쉽지 않아서 근사적인 방법을 사용해야 한다.
+
+### Lsearch
+
+Lsearch의 핵심은 feasible solution으로 부터 트리 분할을 시작한다는 것이다. 다시 말해, random한 split point에서 출발한다는 것을 의미한다. 파라미터들을 랜덤하게 할당한 후 `split optimization`과 `branch optimization`을 반복적으로 수행하는 것이 Lsearch이다. split optimization 단계에서는 parent node에서 child node로 가는 화살표는 모두 고정한 상태에서 각각의 parent node의 split point를 바꿔가면서 전체 entropy가 가장 낮게 하는 split 조합을 찾는 것을 목적으로 한다. branch optimization 단계에서는 left child node와 right child node를 어떻게 할당하는 것이 최적인지 찾는다. 하나의 parent node의 최적 left/right child node 할당을 찾는 과정에서 나머지 parent 노드들의 화살표는 고정된다. 그런 다음 split optimization과 branch optimization을 더 이상 전체 entropy의 감소가 없을 때까지 반복한다.
+
+
+### Cluster Search
+
+Cluster search는 branch optimization 과정이 global하게 진행된다는 점에서 Lsearch와 차이가 있다. 먼저 $$|2N_p|$$개의 temporary child node들이 전통적이 트리 기반 방법을 통해 만들어진다. 그 다음에는 temporary node들이 $$M=|N_c|$$개의 그룹으로 클러스터링 된다. 다시 말해, node clustering을 통해 child node를 병합하는 것이다.
 
 {% highlight python %}
 
 {% endhighlight %}
 
+# Reference
+
+[1] Trevor Hastie, Robert Tibshirani, Jerome Friedman (2009). The Elments of Statistical Learning. Springer.
+
+[2] Ramon Diaz-Uriarte, Sara Alvarez (2006). Gene Selection and Classification of Microarray Data Using Random Forest
+
+[3] Juan J. Rodrı´guez, Ludmila I. Kuncheva. (2006). Rotation Forest: A New Classifier Ensemble Method
+
+[4] Jamie Shotton et.al. (2013). Decision Jungles:Compact and Rich Models for Classification
+
 [1]: https://web.stanford.edu/~hastie/ElemStatLearn/
+
+[2]: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-7-3

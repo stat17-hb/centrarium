@@ -120,6 +120,57 @@ plt.show()
   <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="300">
 </a>
 
+## Out of Bag Samples
+
+배깅된 트리는 평균적으로 관측치들의 약 2/3을 이용한다. Out of Bag(이하 OOB) 샘플은 배깅된 트리를 적합하는데 사용되지 않은 나머지 약 1/3의 관측치들이다.
+
+랜덤 포레스트는 배깅을 기반으로 하기 때문에 OOB 샘플을 test set 대신 사용하여 OOB error를 구할 수 있다. OOB error는 test error와 거의 비슷한 값을 준다고 알려져 있다. 이를 Boston 데이터를 통해 살펴보자.
+
+{% highlight python %}
+cv_error=[]
+cv_mse=[]
+N = len(all_boston)
+random.seed(0)
+idx_fold = np.random.choice(np.arange(5), N, replace=True)
+for ntree in range(20, 510, 10):
+    temp_mse = []
+    temp_error = []
+    for fold in range(5):
+        if ntree % 10 == 0 : print(fold+1, "th fold ", "ntree=",ntree)
+        idx_test = idx_fold==fold
+        idx_train = idx_fold!=fold
+        X_train = all_boston.iloc[idx_train, 0:13]
+        y_train = all_boston.iloc[idx_train, 13]
+        X_test = all_boston.iloc[idx_test, 0:13]
+        y_test = all_boston.iloc[idx_test, 13]
+    
+        rf = RandomForestRegressor(n_estimators=ntree, max_features=4, random_state=0, n_jobs=-1, oob_score=True)
+        rf.fit(X_train, y_train)
+        rf_pred = rf.predict(X_test)
+        temp_mse.append(np.mean((rf_pred-np.array(y_test).flatten())**2))
+        temp_error.append(1-rf.score(X_test,y_test))
+    cv_mse.append(np.mean(temp_mse))
+    cv_error.append(np.mean(temp_error))
+{% endhighlight %}
+
+{% highlight python %}
+# Draw plot
+ntree = range(20, 510, 10)
+plt.style.use('ggplot')
+plt.plot(ntree, oob_error, label="OOB error")
+plt.plot(ntree, cv_error, label="CV error")
+plt.xlabel('Number of trees')
+plt.ylabel('Error')
+plt.legend()
+plt.show()
+{% endhighlight %}
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/oob.png?raw=true" data-lightbox="oob" data-title="oob">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/oob.png?raw=true" title="oob" width="300">
+</a>
+
+
+
 
 {% highlight python %}
 

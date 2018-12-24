@@ -352,7 +352,7 @@ from sklearn.datasets import load_breast_cancer
 bc = load_breast_cancer()
 all_data = pd.concat([pd.DataFrame(bc.data, columns=bc.feature_names), pd.DataFrame(bc.target, columns=["target"])], axis=1)
 
-# plit test & train data
+# split test & train data
 N = len(all_data)
 ratio = 0.75
 random.seed(0)

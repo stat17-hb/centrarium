@@ -120,7 +120,7 @@ plt.show()
   <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/nfeatures.png?raw=true" title="nfeatures" width="400">
 </a>
 
-6일 때가 가장 낮은 값을 보이지만 $p/3$에 가까운 4도 이와 거의 비슷한 결과를 보이고 있다.
+6일 때가 가장 낮은 값을 보이지만 $$p/3$$에 가까운 4도 이와 거의 비슷한 결과를 보이고 있다.
 
 ## Out of Bag Samples
 

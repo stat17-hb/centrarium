@@ -490,7 +490,7 @@ Cluster search는 branch optimization 과정이 global하게 진행된다는 점
 
 [https://drive.google.com/file/d/0B0tdfxikEBvtVnpOdXNKQUd2S2M/view](https://drive.google.com/file/d/0B0tdfxikEBvtVnpOdXNKQUd2S2M/view)
 
-위의 코드를 기반으로 디시전 정글 예제 코드를 만들었다. itemfreq 대신 np.unique를 사용하여 major class 개수를 셋고, pd.concat을 할 때 row index가 맞지 않으면 새로운 행들이 추가되어 NA 값이 채워지는 것을 막기 위해 row index를 맞춰주었다. 랜덤 포레스트에서와 마찬가지로 seed를 고정하여 같은 결과를 reproduce해 보려고 하였지만 이 코드에서도 seed가 고정되지 않았다. 이 부분은 추후에 수정이 필요해 보인다.
+위의 코드를 기반으로 디시전 정글 예제 코드를 만들었다. itemfreq 대신 np.unique를 사용하여 major class 개수를 셋고, pd.concat을 할 때 row index가 맞지 않으면 새로운 행들이 추가되어 NA 값이 채워지는 것을 막기 위해 row index를 맞춰주었다. 랜덤 포레스트에서와 마찬가지로 seed를 고정하여 같은 결과를 reproduce해 보려고 하였지만 이 코드에서도 seed가 고정되지 않았다. 이 부분은 추후에 수정이 필요해 보인다. 예제 데이터로는 랜덤 포레스트에서와 같은 breast cancer 데이터를 사용하였다.
 
 {% highlight python %}
 import math

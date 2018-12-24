@@ -486,9 +486,633 @@ Lsearch의 핵심은 feasible solution으로 부터 트리 분할을 시작한�
 
 Cluster search는 branch optimization 과정이 global하게 진행된다는 점에서 Lsearch와 차이가 있다. 먼저 $$\|2N_p\|$$개의 temporary child node들이 전통적이 트리 기반 방법을 통해 만들어진다. 그 다음에는 temporary node들이 $$M=\|N_c\|$$개의 그룹으로 클러스터링 된다. 다시 말해, node clustering을 통해 child node를 병합하는 것이다.
 
-{% highlight python %}
+## Example
 
+[https://drive.google.com/file/d/0B0tdfxikEBvtVnpOdXNKQUd2S2M/view](https://drive.google.com/file/d/0B0tdfxikEBvtVnpOdXNKQUd2S2M/view)
+
+위의 코드를 기반으로 디시전 정글 예제 코드를 만들었다. itemfreq 대신 np.unique를 사용하여 major class 개수를 셋고, pd.concat을 할 때 row index가 맞지 않으면 새로운 행들이 추가되어 NA 값이 채워지는 것을 막기 위해 row index를 맞춰주었다. 랜덤 포레스트에서와 마찬가지로 seed를 고정하여 같은 결과를 reproduce해 보려고 하였지만 이 코드에서도 seed가 고정되지 않았다. 이 부분은 추후에 수정이 필요해 보인다.
+
+{% highlight python %}
+import math
+import numpy as np
+import pandas as pd
+from scipy.stats import entropy
+import random
+
+# Load data
+from sklearn.datasets import load_breast_cancer
+bc = load_breast_cancer()
+all_data = pd.concat([pd.DataFrame(bc.data, columns=bc.feature_names), pd.DataFrame(bc.target, columns=["Y"])], axis=1)
+
+# split test & train data
+N = len(all_data)
+ratio = 0.75
+random.seed(0)
+idx_train = list(np.random.choice(np.arange(N), np.int(ratio * N), replace=False))
+idx_test = list(set(np.arange(N)).difference(idx_train))  
+
+train = all_data.iloc[idx_train,:]
+test = all_data.iloc[idx_test,:]
+
+
+# 파이썬에 which 함수가 없어 정의
+which = lambda lst:list(np.where(lst)[0])
+
+# 레이블을 담고 있는 인덱스와 Feature를 담고 있는 인덱스 지정
+# 레이블 인덱스의 이름은 반드시 Y 가 되어야 함 (엔트로피 계산시에도 사용)
+idx_label = which(train.columns==u"Y")
+idx_feature = which(train.columns!=u"Y")
+
+limit_w=4
+limit_d=10 # max_depth
+op_select = "sqrt"
+prob = 0.8
+
+#### Main fucntion ####
+
+def model_dj (data,               # traning dataset
+              idx_feature,        # index of the features 
+              idx_label,          # index of the label
+              limit_w,            # limit of width (2^w)
+              limit_d,            # limit of depth
+              op_select = "full", # one of "full, sqrt, prob, log2"
+              prob = 0.8):          # if op_select is prob, ratio of choice
+
+    ## dataframe of attributes of a tree
+    tree = {'dim'   : np.repeat(-1,cum_numNodes(limit_d, limit_w)),
+        'theta' : np.repeat(0,cum_numNodes(limit_d, limit_w)),
+        'l'     : np.repeat(0,cum_numNodes(limit_d, limit_w)),
+        'r'     : np.repeat(0,cum_numNodes(limit_d, limit_w)),
+        'class_': np.repeat(' ',cum_numNodes(limit_d, limit_w))       
+        }
+    
+    tree = pd.DataFrame(tree)
+
+    ## add columns
+    
+    Np = pd.Series(np.repeat(1, len(data)))
+    Nc = pd.Series(np.repeat(1, len(data)))
+    
+    
+    temp = {'Np' : pd.Series(np.repeat(1, len(data))),
+            'Nc' : pd.Series(np.repeat(1, len(data))),
+            'idx': pd.Series(range(1,len(data)+1))}
+    
+    temp = pd.DataFrame(temp)
+    temp.index = data.index # index를 맞춰줘야 제대로 concat 이 됨!!!
+    data = pd.concat([data,temp],axis=1) # len(data)=426, len(temp)=426인데 len(pd.concat([data,temp],axis=1))=534??
+    
+    ## initialize tree edges
+    tree = init_edges(tree)
+    # 트리는 현재 레벨까지의 총 노드 수 만큼 딤, 쎄타, 엘, 알, 클래스를 초기화하였다.
+
+    ## decision jungle algorithm
+    for depth in range(1, limit_d+1):
+        # j는 1부터 제한 뎁스까지 증가
+        print("****************","depth =", depth, "****************")
+        
+        Np = np.unique((data.loc[:,'Nc']))      
+        print("Np:", Np)
+    
+        terminal_flag = True
+        dims = select_feature(f = idx_feature, option = op_select, prob = prob) # dims: 선택된 변수의 열 인덱스       
+
+        for i in Np:
+            print("-----------------","Np Node " + str(i), "-----------------")
+            subdata = data[data.loc[:,'Nc'] == i]
+            idx_subdata = subdata.idx
+            tmp = find_majorClass(subdata, idx_label) # index 1 is out of bounds for axis 0 with size 0
+            tree.loc[i-1,'class_'] = tmp
+            
+            if (len(subdata) == 0):
+                print("Sub Data 가 0인 경우")
+                continue  # 'cause parent node is pure, one of children has all data
+            
+            
+            if (H(subdata, idx_label) == 0):
+                print ("H 값이 0인 경우")
+                data.loc[data.idx.isin(idx_subdata),"Np"] = data.loc[data.idx.isin(idx_subdata),"Nc"]
+                data.loc[data.idx.isin(idx_subdata),"Nc"] = find_Nc(i)[0]
+                tree.loc[i-1,"dim"] = 1
+                tree.loc[i-1,"theta"] = np.inf
+                continue
+   
+            split_info = split_data(subdata, dims, idx_label)
+
+            data.loc[data.idx.isin(split_info['l']), "Np"] = data.loc[data.idx.isin(split_info['l']), "Nc"]
+            data.loc[data.idx.isin(split_info['l']), "Nc"] = find_Nc(i)[0]
+            data.loc[data.idx.isin(split_info['r']), "Np"] = data.loc[data.idx.isin(split_info['r']), "Nc"]
+            data.loc[data.idx.isin(split_info['r']), "Nc"] = find_Nc(i)[1]
+                        
+            # save split info.
+            tree.loc[i-1,"dim"] = split_info['d']
+            tree.loc[i-1,"theta"] = split_info['theta']
+            terminal_flag = False
+    
+            # for debug
+            print("set threshold : Np is "+ str(i) + " / level is " + str(depth))           
+            idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+            print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+            #print(tree)
+    
+        print("set threshold : level is " + str(depth))
+        #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+        
+        # terminal condition (if child nodes become pure, go out of loop)
+        if terminal_flag == True:
+            break 
+        
+        print(is_limitWidth(depth))
+        # decision jungle logic below 
+        
+        if is_limitWidth(depth) == False:
+            continue
+            
+        # 2) update best_deminsion & best_theta
+    
+        for i in Np:
+            subdata = data.loc[data.Np == i, :]
+
+            if len(subdata) == 0:
+                continue          # if parent node is empty, go to next parent node
+            #if (H(subdata, idx_label) == 0):
+                #continue # if parent node is pure, we don't need to adjust threshold
+                
+            split_info = split_data(data, dims, idx_label, i)
+
+            # update Nc and split info.
+            data.loc[data.idx.isin(split_info['l']), "Nc"] = find_Nc(i)[0]
+            data.loc[data.idx.isin(split_info['r']), "Nc"] = find_Nc(i)[1]
+            tree.loc[i-1,"dim"] = split_info['d']
+            tree.loc[i-1,"theta"] = split_info['theta']
+            # for debug
+            #print ("update threshold : Np is " + str(i) + " / level is " str(j))
+            #idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+            #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+            #print(tree)
+            
+        print("update threshold : level is " + str(depth))
+        #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+          
+
+        # 3) update edges
+        # left
+        for i in Np:
+            min_ent = np.inf
+            best_edge = 0
+            Nc = conv_lTon(depth+1)             # index of child nodes in curent level(parent nodes)
+            
+            if (len(subdata) == 0):
+                continue          # if parent node is empty, go to next parent node
+                
+            #if (H(subdata, idx_label) == 0) next # if parent node is pure, we don't need to adjust threshold
+            
+            subdata     = data.loc[(data.Np == i) & (data.Nc == find_Nc(i)[0]),:] # extract data of a left edge Np
+            idx_subdata = subdata.idx
+            
+            # update edge
+            for k in Nc:
+                if (k == find_Nc(i)[1]):
+                    continue       # if current child nodes(right)
+                data.loc[data.idx.isin(idx_subdata), "Nc"] = k
+                idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+                ent = cal_totalEnt(data, idx_label, idx_node = idx_node)
+                
+                if(min_ent > ent):
+                    min_ent = ent
+                    best_edge = k
+        
+            data.loc[data.idx.isin(idx_subdata),"Nc"] = best_edge
+            tree.loc[i-1,"l"] = best_edge
+
+            # for debug
+            print("update left edge : Np is " + str(i) + " / level is " + str(depth))
+            #idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+            #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+            #print(tree)
+            
+            
+        print("update left edge : level is " +str(depth))
+        #idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+        #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+        
+        # right
+        for i in Np:
+            min_ent = np.inf
+            best_edge = 0           
+            Nc = conv_lTon(depth+1)             # index of child nodes in curent level(parent nodes)
+            
+            if (len(subdata) == 0):
+                continue          # if parent node is empty, go to next parent node
+                
+            #if (H(subdata, idx_label) == 0) next # if parent node is pure, we don't need to adjust threshold
+                        
+            subdata     = data.loc[(data.Np == i) & (data.Nc == find_Nc(i)[1]),:] # extract data of a left edge Np
+            idx_subdata = subdata.idx
+
+            # update edge
+            
+            for k in Nc:
+                if (tree.loc[i-1,"l"] == k):
+                    continue       # if current child nodes(right)
+                data.loc[data.idx.isin(idx_subdata), "Nc"] = k
+                idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+                ent = cal_totalEnt(data, idx_label, idx_node = idx_node)
+                
+                if(min_ent > ent):
+                    min_ent = ent
+                    best_edge = k                    
+                    
+            data.loc[data.idx.isin(idx_subdata),"Nc"] = best_edge
+            if tree.loc[i-1,"l"] > best_edge:
+                tree.loc[i-1,"r"] = tree.loc[i-1,"l"]
+                tree.loc[i-1,"l"] = best_edge
+            else:
+                tree.loc[i-1,"r"] = best_edge
+                    
+            # for debug
+            print("update right edge : Np is " + str(i) + " / level is " + str(depth))
+            #idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+            #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+            #print(tree)
+            
+        print("update right edge : level is " +str(depth))
+        #idx_node = [z for z, x in enumerate((data.columns == "Nc")) if x][0]
+        #print(cal_totalEnt(data, idx_label, idx_node = idx_node))
+        
+    return tree
+
+#===========================
+# S : d 레벨에서 limit_w 라는 제한이 있을 때 사용할 수 있는 노드 수
+#===========================
+def S (d, D = None):
+    if D == None:
+        D = limit_w     
+    return min(pow(2,d), pow(2,D-1))
+
+#===========================
+# is_limitWidth :
+# d 가 Width의 제한에 걸렸는지 여부를 리턴
+# True / False
+#===========================
+def is_limitWidth (d, D = None):
+    # limit_w - User Parameter
+    if D == None:
+        D = limit_w
+    return ( d > (D-1) )
+  
+#===========================
+# cum_numNodes(level) : 
+# 지금까지의 레벨까지 사용한 총 노드 수
+#===========================
+def cum_numNodes (level, w = None):
+    num_nodes = 0
+    if w == None:
+        w = limit_w
+    if (level < w):
+        for i in range(level):
+            num_nodes += pow(2,i)
+    else:
+        for i in range(w):
+            num_nodes += pow(2,i)
+        num_nodes = num_nodes + (level-w)*S(level)     
+    return (num_nodes)
+
+#===========================    
+# conv_lTon  :
+# return nodes # when level is given
+# 현재 레벨의 노드 번호 나열
+#===========================    
+def conv_lTon (level, w = None):
+    if w == None:
+        w = limit_w
+    if (level == 1):
+        return 1
+    else:
+        return range(cum_numNodes(level-1)+1, cum_numNodes(level)+1)
+  
+#===========================    
+# conv_nTol :
+# 노드 번호를 이용해서 현재 노드가 속한 레벨을 구한다.
+#===========================    
+def conv_nTol (node, w = None):
+    if w == None:
+        w = limit_w
+        
+    if ( pow(2,w) > node ):
+        # 제한에 걸리지 않는 다면
+        j = 1
+        while (True):
+            if(node < pow(2,j)):
+                break
+            j = j+1
+        return (j)
+    else:
+        return ( ((node-cum_numNodes(w)-1) / S(w))+w+1)
+
+#===========================    
+# init_edges : Edge 들을 초기화
+#===========================  
+def init_edges(tree, d = None, w = None):
+    if d == None:
+        d = limit_d
+    if w == None:
+        w = limit_w
+    
+    max_nodes = cum_numNodes(d) # d 레벨까지 사용한 총 노드 수 = max 노드
+    #for i in range(1,int(max_nodes+1)): # 'float' object cannot be interpreted as an integer
+    for i in range(1,int(max_nodes+1)): # op_select = "sqrt"이면 error 발생
+        if( cum_numNodes(w-1) >= i ):
+            tree.loc[i-1,'l'] = i*2
+            tree.loc[i-1,'r'] = 2*i+1
+        else:
+            if (i-cum_numNodes(w-1))% S(w) == 0:
+                # if i is last nodes of each level
+                tree.loc[i-1,'l'] = i+1
+                tree.loc[i-1,'r'] = i+S(w) # connect first and last node of next level
+            else:
+                tree.loc[i-1,'l'] = i+S(w)
+                tree.loc[i-1,'r'] = i+S(w)+1  # connect next level(child node)
+    return (tree)    
+
+#===========================    
+# find_Nc: 현재 노드의 l, r 을 알려준다.
+#=========================== 
+def find_Nc(i, w = None):
+    if w == None:
+        w = limit_w
+    if( cum_numNodes(w-1) >= i ):
+        return [i*2, 2*i+1]
+    else:
+        if ((i-cum_numNodes(w-1))%S(w, w) ==  0):
+            return [i+1, i+S(w, w)]
+        else:
+            return [i+S(w, w), i+S(w, w)+1]
+
+#===========================    
+# select_feature : 사용할 feature를 리턴
+#=========================== 
+def select_feature (f, option = "full", prob = 0):
+    # select_feature f는 피처를 나타내는 행 리스트 (y행을 뺀 나머지)
+    numX = len(f)
+    
+    if (option == "full"):
+        return (f) # 풀인 경우 그대로 다시 내보냄
+
+    if (option == "sqrt"):
+        # 제곱근 만큼 피처를 내보냄
+        if (round(math.sqrt(numX), 0) < 2):
+            n = 2
+        else:
+            n = int(round(math.sqrt(numX), 0))           
+            return sorted(np.random.choice(f, size=n, replace = False))
+        # 복원 추출하지 않고, 제곱근 개의 피처를 리턴
+  
+    if (option == "prob"):
+        # 확률 만큼
+        if (round(prob*numX , 0) < 2):
+            n = 2
+        else:
+            n = int(round(prob*numX , 0))
+        return (sorted(np.random.choice(f, size=n, replace = False)))
+        
+    if (option == "log2"):
+        # 로그 2 만큼
+        if (round(math.log(numX,2), 0) < 2):
+            n = 2
+        else:
+            n = int(round(math.log(numX,2), 0))
+        return (sorted(np.random.choice(f, size=n, replace = False)))
+
+#===========================    
+# find_majorClass : 범주 중에 더 많은 쪽을 알려줌 ---  에러 발생해서 수정함!!
+#===========================     
+def find_majorClass(data, idx_label):
+    print("[Func] find_majorClass")
+    x = data.iloc[:,idx_label]
+    item = np.unique(x, return_counts=True)
+    majorClass = item[0][np.argmax(item[1])]
+    return majorClass
+            
+#===========================    
+# H : 섀넌의 엔트로피 계산
+#=========================== 
+def H(data, label = None):
+    if label == None:
+        label = idx_label
+    if (len(data) == 0):
+        return (0)
+    
+    return entropy(data["Y"].value_counts().tolist(), qk=None, base=2)
+
+
+#===========================    
+# cal_totalEnt : 현재 레벨 전체의 섀넌의 엔트로피 계산
+#=========================== 
+def cal_totalEnt(data, idx_label, idx_node):
+    ent = 0
+    if len(data) == 0:
+        return (0)
+    #if (is.na(data)) return (0)
+
+    node = np.unique(data.iloc[:, idx_node])
+
+    for i in node:
+        subdata = data.loc[ data.iloc[:, idx_node] == i,: ]
+        ent = ent + len(subdata) * H(subdata, idx_label[0])
+
+    return (ent)
+
+#===========================    
+# split_data : 실제 분류하는 부분
+#===========================
+def split_data (data, idx_feature, idx_label, parent = 'NA'):
+    best_theta = best_feature = 0
+    min_entropy = np.inf
+    
+    if H(data, idx_label) == 0:
+        return 'NA'
+  
+    if parent == 'NA':
+        print("Decision Tree Algorithm")
+        for i in idx_feature:
+            #i = 0
+            ## initailize variables 
+            #print "[+] Split Feature 가 " + str(i) + "번 째 Feature 일 때"
+            data_order = data.iloc[np.argsort(data.iloc[:,i]),:]
+            # i 피처에 대한 정렬, order하면 해당 위치에 순서를 알려줌
+            # 데이터로 감싸야 원래 형태로 바뀜.
+            #data_order는 i 에 대해 정렬된 상태                   
+            
+            #idx = data_order.loc[:,'idx']
+            data_i = data_order.iloc[:, i] # 피처 i 에 대해서 정렬된 데이터
+            #print data_i
+            #j=0                  
+            for j in range(0,len(data)-1):
+                # skip if ith and (i+1)th data is same or one of exceptRow j = 1
+                if (data_i.iloc[j] == data_i.iloc[j+1]):
+                    continue
+                
+                theta = (data_i.iloc[j] + data_i.iloc[j+1]) / 2      
+                # Theta는 중간 값을 취한다. 정렬된 값을 반으로 나눔
+                #left  = data.loc[ data.iloc[:, idx_feature[i]] <  theta,:]  # Theta보다 작으면 왼쪽
+                left  = data.loc[ data.iloc[:, i] <  theta,:]  # Theta보다 작으면 왼쪽
+
+                #right = data.loc[ data.iloc[:, idx_feature[i]] >= theta,:]  # Theta보다 크거나 같으면 오른쪽
+                right = data.loc[ data.iloc[:, i] >= theta,:]
+
+                # calcurate entropy
+                ent_left  = H(left,  idx_label)  # entropy of left nodes
+                ent_right = H(right, idx_label)  # entropy of right nodes
+                ent_total = (len(left)*ent_left) + (len(right)*ent_right)
+                #전체 엔트로피는 왼쪽의 개체수 곱하기 왼쪽 엔트로피 + 오른쪽 개체수 * 오른쪽 엔트로피
+                #print ent_total
+                # save better parameters 
+                if(min_entropy > ent_total ):
+                    min_entropy = ent_total
+                    best_theta = theta # 엔트로피가 최소가 되는 Theta (전체 하나 위에꺼 까지 전부다 검색)
+                    #best_feature = idx_feature[i] # 어떤 피처인지 찾는다.
+                    best_feature = i # 어떤 피처인지 찾는다. 바꾼것.
+
+
+        # result divided dataset
+        left  = data.loc[data.iloc[:, best_feature] <  best_theta,:]  # index out of range
+        right = data.loc[data.iloc[:, best_feature] >= best_theta,:] 
+        
+        result = dict({'d' : best_feature, 'theta': best_theta, 'l':left.idx, 'r': right.idx})
+        return result
+        
+    ## decision jungle logic    
+    else:
+        print("Decision Jungle Algorithm")
+        # extract fixed child nodes(left / right)
+        #print "parent : " + str(parent) + "Nc" + str(find_Nc(parent)[0])
+        subdata_exRows_l = data.loc[(data.Nc == find_Nc(parent)[0]) & (data.Np != parent),:]
+        subdata_exRows_r = data.loc[(data.Nc == find_Nc(parent)[1]) & (data.Np != parent),:]
+        
+        # extract movable child nodes
+        subdata_movable  = data.loc[data.Np == parent,:]
+        #print("SUBDATA MOVABLE :" + str(len(subdata_movable)))
+        if(len(subdata_movable) == 0):
+            best_theta = np.inf
+            best_feature = idx_feature[0]
+
+            # result dividing dataset
+            left  = subdata_exRows_l
+            
+            right  = subdata_exRows_r
+            
+            result = dict({'d' : best_feature, 'theta': best_theta, 'l':left.idx, 'r': subdata_exRows_r})
+            return (result)
+            
+        for i in idx_feature:
+            # initailize variables
+            #print ("Decision Jungle Feature") + str(i)
+            data   = subdata_movable.iloc[ np.argsort(subdata_movable.iloc[:, i]),: ]
+            #print "subdata_movable " + str(len(data))
+            if(min(data.iloc[:, i]) > 0):
+                start = min(data.iloc[:, i])/2
+            else:
+                start = min(data.iloc[:, i])*2
+            if(max(data.iloc[:, i]) > 0):
+                end   = min(data.iloc[:, i])*2
+            else:
+                end   = min(data.iloc[:, i])/2
+            
+            data_i = []
+            data_i.append(start)
+            data_i += data.iloc[:, i].tolist()
+            data_i.append(end)
+            
+            for j in range(0, len(data_i)-1):
+                
+                if data_i[j] == data_i[j+1]:
+                    continue
+                
+                theta = (data_i[j] + data_i[j+1]) / 2
+                left  = data.loc[data.iloc[:, i] <  theta,:].append(subdata_exRows_l)
+                right  = data.loc[data.iloc[:, i] >=  theta,:].append(subdata_exRows_r)
+                
+                # calcurate entropy
+                
+                ent_left  = H(left,  2)  # entropy of left nodes
+                ent_right = H(right, 2)  # entropy of right nodes
+                ent_total = len(left)*ent_left + len(right)*ent_right
+                            
+                # save better parameters
+                if(min_entropy > ent_total):
+                    min_entropy = ent_total
+                    best_theta = theta # 엔트로피가 최소가 되는 Theta (전체 하나 위에꺼 까지 전부다 검색)
+                    best_feature = i # 어떤 피처인지 찾는다. 수정
+        
+        # result dividing dataset
+        #left  = rbind (subdata_movable.loc[ subdata_movable.iloc[:, best_feature] <  best_theta,: ], subdata_exRows_l)
+        left  = subdata_movable.loc[ subdata_movable.iloc[:, best_feature] <  best_theta,: ].append(subdata_exRows_l)
+        right = subdata_movable.loc[ subdata_movable.iloc[:, best_feature] >= best_theta,: ]
+        
+        result = dict({'d' : best_feature, 'theta': best_theta, 'l':left.idx, 'r': right.idx})
+        return (result)
+		
+#===========================    
+# predict_dj : 학습한 모델로 실제 predict 하는 부분
+#===========================
+def predict_dj(tree, data):
+    result = list()
+    for i in range(0,len(data)):
+        #x = data.loc[i,:]
+        x = data.iloc[i,:]  # loc => iloc 으로 수정
+        node = 1
+        
+        while (tree.loc[node-1,"l"] <= len(tree) and tree.loc[node-1,"r"] <= len(tree) ):
+            dim_l = tree.loc[(tree.loc[node-1,"l"])-1, "dim"]
+            #print dim_l
+            dim_r = tree.loc[(tree.loc[node-1,"r"])-1, "dim"]
+            #print dim_r
+            if (dim_l == -1 & dim_r == -1):   # if next node is empty
+                break
+            
+            if ( x.iloc[tree.dim[node-1]] < tree.theta[node-1]):
+                if (tree.loc[(tree.l[node-1])-1, "dim"] == -1):
+                    break
+                else:
+                    node = tree.l[node-1] # go a  left node
+            else:
+                if (tree.loc[(tree.r[node-1]-1), "dim"] == -1):
+                    break
+                else:
+                    node = tree.r[node-1] # go a right node                
+                
+        if (tree.loc[node-1, "class_"] == " "):
+            print("space err")
+        if tree.loc[node-1, "class_"] == "NA":
+            print("na err")
+        if (tree.loc[node-1, "class_"] == 0):
+            print("null err")
+        
+        #print "Node Num "
+        #print node-1
+        pred = tree.loc[node-1, "class_"]
+        result.append(pred)   
+    
+    return result
+
+# Model fitting
+random.seed(0)
+dj_fit = model_dj(data = train,
+                  idx_feature = idx_feature,
+                  idx_label = idx_label,
+                  limit_w = 4,
+                  limit_d = 10,
+                  op_select = "sqrt")
+
+dj_pred = predict_dj(dj_fit, test.iloc[:,0:30])
+np.mean(dj_pred == test["Y"])
 {% endhighlight %}
+
+<a href="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/dj_results.PNG?raw=true" data-lightbox="dj_results" data-title="dj_results">
+  <img src="https://github.com/stat17-hb/stat17-hb.github.io/blob/master/assets/dj_results.PNG?raw=true" title="dj_results" width="400">
+</a>
+
 
 # Reference
 
